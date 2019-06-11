@@ -1,3 +1,4 @@
-export interface Message {
-  message: string;
+export interface PlayerDTO {
+  id: number;
+  name: string;
 }

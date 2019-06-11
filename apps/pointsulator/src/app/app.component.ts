@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Message } from '@pointsulator/api-interface';
 
 @Component({
-  selector: 'pointsulator-root',
+  selector: 'pt-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

@@ -6,25 +6,25 @@ import {
   MetaReducer
 } from '@ngrx/store';
 import { environment } from '../../environments/environment';
-import * as fromPlayers from '../players/players.reducer';
+import * as fromAssets from '../assets/assets.reducer';
 
 export interface State {
-  players: fromPlayers.State;
+  assets: fromAssets.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
-  players: fromPlayers.reducer
+  assets: fromAssets.reducer
 };
 
 export const metaReducers: MetaReducer<State>[] = !environment.production
   ? []
   : [];
 
-export const selectPlayersState = createFeatureSelector<fromPlayers.State>(
-  'players'
+export const selectAssetsState = createFeatureSelector<fromAssets.State>(
+  'assets'
 );
 
-export const selectAllPlayers = createSelector(
-  selectPlayersState,
-  fromPlayers.selectAllPlayers
+export const selectAllAssets = createSelector(
+  selectAssetsState,
+  fromAssets.selectAllAssets
 );

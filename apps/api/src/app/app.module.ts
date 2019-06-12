@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PlayersModule } from './players/players.module';
+import { AssetsModule } from './assets/assets.module';
 import { getConnectionOptions } from 'typeorm';
-import { Player } from './players/player.entity';
+import { Asset } from './assets/asset.entity';
 
 @Module({
   imports: [
@@ -12,11 +12,11 @@ import { Player } from './players/player.entity';
 
         return {
           ...connectionOptions,
-          entities: [Player]
+          entities: [Asset]
         };
       }
     }),
-    PlayersModule
+    AssetsModule
   ]
 })
 export class AppModule {}

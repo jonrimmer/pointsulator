@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import * as PlayersPageActions from '../players-page/players-page.actions';
+import * as AssetsPageActions from './assets-page/assets-page.actions';
 import { exhaustMap, map, catchError } from 'rxjs/operators';
-import { PlayersService } from './players.service';
-import * as PlayersActions from './players.actions';
+import { AssetsService } from './assets.service';
+import * as AssetsActions from './assets.actions';
 import { EMPTY } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlayersEffects {
+export class AssetsEffects {
   loadPlayers$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(PlayersPageActions.loadPlayers),
+      ofType(AssetsPageActions.loadAssets),
       exhaustMap(() =>
-        this.playersService.getAll().pipe(
-          map(players => PlayersActions.loadPlayers({ players })),
+        this.assetsService.getAll().pipe(
+          map(assets => AssetsActions.loadAssets({ assets })),
           catchError(() => EMPTY)
         )
       )
@@ -24,6 +24,6 @@ export class PlayersEffects {
 
   constructor(
     private actions$: Actions,
-    private readonly playersService: PlayersService
+    private readonly assetsService: AssetsService
   ) {}
 }

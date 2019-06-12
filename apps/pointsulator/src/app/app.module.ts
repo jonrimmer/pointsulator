@@ -16,34 +16,37 @@ import {
   MatIconModule,
   MatListModule
 } from '@angular/material';
-import { PlayersPageComponent } from './players-page/players-page.component';
-import { PlayersEffects } from './players/players.effects';
+import { AssetsPageComponent } from './assets/assets-page/assets-page.component';
+import { AssetsEffects } from './assets/assets.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 
 export const ROOTS = [
   {
-    path: 'players',
-    component: PlayersPageComponent
+    path: 'assets',
+    component: AssetsPageComponent
   }
 ];
 
 @NgModule({
-  declarations: [AppComponent, PlayersPageComponent],
+  declarations: [AppComponent, AssetsPageComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
     NoopAnimationsModule,
     RouterModule.forRoot(ROOTS),
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([PlayersEffects]),
+    EffectsModule.forRoot([AssetsEffects]),
     LayoutModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
     MatIconModule,
     MatListModule,
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production })
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

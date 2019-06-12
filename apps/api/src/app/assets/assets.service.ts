@@ -1,0 +1,20 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Asset } from './asset.entity';
+import { Repository } from 'typeorm';
+
+@Injectable()
+export class AssetsService {
+  constructor(
+    @InjectRepository(Asset)
+    private readonly assetRepository: Repository<Asset>
+  ) {}
+
+  findAll(): Promise<Asset[]> {
+    return this.assetRepository.find();
+  }
+
+  findById(id: number): Promise<Asset> {
+    return this.assetRepository.findOne(id);
+  }
+}

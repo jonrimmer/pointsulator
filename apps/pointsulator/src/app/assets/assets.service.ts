@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { PlayerDTO } from '../../../../../libs/api-interface/src';
+import { AssetDTO } from '../../../../../libs/api-interface/src';
 import { Observable } from 'rxjs';
 
-const PLAYERS_ENDPOINT = `${environment.apiUrl}/players`;
+const ASSETS_ENDPOINT = `${environment.apiUrl}/assets`;
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlayersService {
+export class AssetsService {
   constructor(private readonly http: HttpClient) {}
 
-  getAll(): Observable<PlayerDTO[]> {
-    return this.http.get<PlayerDTO[]>(PLAYERS_ENDPOINT);
+  getAll(): Observable<AssetDTO[]> {
+    return this.http.get<AssetDTO[]>(ASSETS_ENDPOINT);
   }
 
   getById(id: number) {
-    return this.http.get<PlayerDTO>(`${PLAYERS_ENDPOINT}/${id}`);
+    return this.http.get<AssetDTO>(`${ASSETS_ENDPOINT}/${id}`);
   }
 }

@@ -22,6 +22,31 @@ export class AssetsEffects {
     )
   );
 
+  updateAsset$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AssetsPageActions.updateAsset),
+      exhaustMap(({ asset }) =>
+        this.assetsService.updateAsset(asset).pipe(
+          map(() =>
+            AssetsActions.saveAsset({ asset: { id: asset.id, changes: asset } })
+          ),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  addAsset$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AssetsPageActions.addAsset),
+      exhaustMap(({ asset }) =>
+        this.assetsService
+          .addAsset(asset)
+          .pipe(map(added => AssetsActions.addAsset({ asset: added })))
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private readonly assetsService: AssetsService

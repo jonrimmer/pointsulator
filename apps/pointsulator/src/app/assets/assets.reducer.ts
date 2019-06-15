@@ -13,7 +13,11 @@ const assetsReducer = createReducer(
   initialState,
   on(AssetsActions.loadAssets, (state, { assets }) =>
     adapter.addAll(assets, state)
-  )
+  ),
+  on(AssetsActions.saveAsset, (state, { asset }) =>
+    adapter.updateOne(asset, state)
+  ),
+  on(AssetsActions.addAsset, (state, { asset }) => adapter.addOne(asset, state))
 );
 
 export function reducer(state: State | undefined, action: Action) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { AssetDTO } from '../../../../../libs/api-interface/src';
+import { AssetDTO } from '@pointsulator/api-interface';
 import { Observable } from 'rxjs';
 
 const ASSETS_ENDPOINT = `${environment.apiUrl}/assets`;
@@ -18,5 +18,13 @@ export class AssetsService {
 
   getById(id: number) {
     return this.http.get<AssetDTO>(`${ASSETS_ENDPOINT}/${id}`);
+  }
+
+  updateAsset(asset: AssetDTO) {
+    return this.http.put(`${ASSETS_ENDPOINT}/${asset.id}`, asset);
+  }
+
+  addAsset(asset: AssetDTO): Observable<AssetDTO> {
+    return this.http.post<AssetDTO>(ASSETS_ENDPOINT, asset);
   }
 }

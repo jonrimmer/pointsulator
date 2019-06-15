@@ -14,12 +14,17 @@ import {
   MatButtonModule,
   MatSidenavModule,
   MatIconModule,
-  MatListModule
+  MatListModule,
+  MatTableModule,
+  MatSortModule,
+  MatInputModule,
+  MatFormFieldModule
 } from '@angular/material';
 import { AssetsPageComponent } from './assets/assets-page/assets-page.component';
 import { AssetsEffects } from './assets/assets.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 export const ROOTS = [
   {
@@ -38,11 +43,17 @@ export const ROOTS = [
     StoreModule.forRoot(reducers, { metaReducers }),
     EffectsModule.forRoot([AssetsEffects]),
     LayoutModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
     MatIconModule,
     MatListModule,
+    MatTableModule,
+    MatSortModule,
+    FormsModule,
+    ReactiveFormsModule,
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production

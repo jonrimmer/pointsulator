@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.add-asset {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+}
+
+.assets-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.col-actions {
+  width: 100px;
+}
+
+.col-id {
+  width: 10%;
+}

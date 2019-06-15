@@ -17,4 +17,8 @@ export class AssetsService {
   findById(id: number): Promise<Asset> {
     return this.assetRepository.findOne(id);
   }
+
+  save(asset: Asset) {
+    return this.assetRepository.save(asset);
+  }
 }

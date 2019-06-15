@@ -1,4 +1,13 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  BadRequestException,
+  ParseIntPipe,
+  Put
+} from '@nestjs/common';
 import { AssetsService } from './assets.service';
 import { AssetDTO } from '@pointsulator/api-interface';
 
@@ -12,7 +21,28 @@ export class AssetsController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<AssetDTO> {
+  async findById(
+    @Param('id', new ParseIntPipe()) id: number
+  ): Promise<AssetDTO> {
     return this.assetsService.findById(id);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() asset: AssetDTO
+  ) {
+    if (id !== asset.id) {
+      throw new BadRequestException(
+        `Path id <${id}> does not match body <${asset.id}>.`
+      );
+    }
+
+    await this.assetsService.save(asset);
+  }
+
+  @Post()
+  create(@Body() asset: AssetDTO) {
+    return this.assetsService.save(asset);
   }
 }

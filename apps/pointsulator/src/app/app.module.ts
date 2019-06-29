@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Route } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -25,23 +25,50 @@ import { AssetsEffects } from './assets/assets.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { WeeksListPageComponent } from './weeks/weeks-list-page/weeks-list-page.component';
+import { WeekPageComponent } from './weeks/week-page/week-page.component';
+import { ManagersPageComponent } from './managers/managers-page/managers-page.component';
+import { ManagersEffects } from './managers/managers.effects';
 
-export const ROOTS = [
+export const ROUTES: Route[] = [
   {
     path: 'assets',
     component: AssetsPageComponent
+  },
+  {
+    path: 'managers',
+    component: ManagersPageComponent
+  },
+  {
+    path: 'weeks',
+    component: WeeksListPageComponent
+  },
+  {
+    path: 'weeks/:id',
+    component: WeekPageComponent
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'weeks'
   }
 ];
 
 @NgModule({
-  declarations: [AppComponent, AssetsPageComponent],
+  declarations: [
+    AppComponent,
+    AssetsPageComponent,
+    WeeksListPageComponent,
+    WeekPageComponent,
+    ManagersPageComponent
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
     NoopAnimationsModule,
-    RouterModule.forRoot(ROOTS),
+    RouterModule.forRoot(ROUTES),
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([AssetsEffects]),
+    EffectsModule.forRoot([AssetsEffects, ManagersEffects]),
     LayoutModule,
     MatFormFieldModule,
     MatInputModule,

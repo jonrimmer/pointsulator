@@ -11,7 +11,9 @@ export class AssetsService {
   ) {}
 
   findAll(): Promise<Asset[]> {
-    return this.assetRepository.find();
+    return this.assetRepository.find({
+      relations: ['owner']
+    });
   }
 
   findById(id: number): Promise<Asset> {

@@ -11,6 +11,16 @@ export class ManagersService {
   ) {}
 
   findAll(): Promise<Manager[]> {
-    return this.managerRepository.find();
+    return this.managerRepository.find({
+      relations: ['squad']
+    });
+  }
+
+  findById(id: number): Promise<Manager> {
+    return this.managerRepository.findOne(id);
+  }
+
+  save(asset: Manager) {
+    return this.managerRepository.save(asset);
   }
 }

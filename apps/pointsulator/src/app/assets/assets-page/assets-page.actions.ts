@@ -1,7 +1,6 @@
-import { createAction, props } from '@ngrx/store';
+import { createAction } from '@ngrx/store';
 import { AssetDTO } from '@pointsulator/api-interface';
-
-export const loadAssets = createAction('[Assets Page] Load assets');
+import { createDataPageActions } from '../../data/adapter';
 
 export const updateAsset = createAction(
   '[Assets Page] Update asset',
@@ -10,5 +9,10 @@ export const updateAsset = createAction(
 
 export const addAsset = createAction(
   '[Assets Page] Add asset',
-  props<{ asset: AssetDTO }>()
+  (asset: AssetDTO) => ({ asset })
+);
+
+export const assetPageActions = createDataPageActions<AssetDTO>(
+  'Assets Page',
+  'asset'
 );

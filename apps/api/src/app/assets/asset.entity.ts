@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { AssetType } from '@pointsulator/api-interface';
+import { Manager } from '../managers/manager.entity';
 
 @Entity()
 export class Asset {
@@ -18,4 +19,7 @@ export class Asset {
     default: AssetType.Striker
   })
   type: AssetType;
+
+  @ManyToOne(() => Manager, owner => owner.squad)
+  owner?: Manager;
 }

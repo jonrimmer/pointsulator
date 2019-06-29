@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AssetsModule } from './assets/assets.module';
 import { getConnectionOptions } from 'typeorm';
 import { Asset } from './assets/asset.entity';
+import { Manager } from './managers/manager.entity';
+import { ManagersModule } from './managers/managers.module';
 
 @Module({
   imports: [
@@ -12,11 +14,12 @@ import { Asset } from './assets/asset.entity';
 
         return {
           ...connectionOptions,
-          entities: [Asset]
+          entities: [Asset, Manager]
         };
       }
     }),
-    AssetsModule
+    AssetsModule,
+    ManagersModule
   ]
 })
 export class AppModule {}

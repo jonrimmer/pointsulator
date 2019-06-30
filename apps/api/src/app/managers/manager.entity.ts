@@ -1,8 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Asset } from '../assets/asset.entity';
+import { TeamSheet } from '../team-sheets/team-sheet.entity';
 
 @Entity()
-export class Manager {
+class Manager {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,5 +14,10 @@ export class Manager {
   public teamName: string;
 
   @OneToMany(() => Asset, asset => asset.owner)
-  squad: Asset[];
+  squad?: Asset[];
+
+  @OneToMany(() => TeamSheet, teamSheet => teamSheet.manager)
+  teamSheets: TeamSheet[];
 }
+
+export { Manager };

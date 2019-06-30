@@ -1,8 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Manager } from './manager.entity';
 import { Repository } from 'typeorm';
+import { Manager } from './manager.entity';
+import { ManagerDTO } from '@pointsulator/api-interface';
 
+function mapManager(m: Manager): ManagerDTO {
+  return {
+    id: m.id,
+    name: m.name,
+    teamName: m.teamName,
+    squad: m.squad
+      ? m.squad.map(a => ({
+          id: a.id,
+          name: a.name
+        }))
+      : null
+  };
+}
 @Injectable()
 export class ManagersService {
   constructor(
@@ -10,17 +24,19 @@ export class ManagersService {
     private readonly managerRepository: Repository<Manager>
   ) {}
 
-  findAll(): Promise<Manager[]> {
-    return this.managerRepository.find({
+  async findAll(): Promise<ManagerDTO[]> {
+    const managers = await this.managerRepository.find({
       relations: ['squad']
     });
+
+    return managers.map(mapManager);
   }
 
-  findById(id: number): Promise<Manager> {
-    return this.managerRepository.findOne(id);
+  async findById(id: number): Promise<ManagerDTO> {
+    return mapManager(await this.managerRepository.findOne(id));
   }
 
-  save(asset: Manager) {
-    return this.managerRepository.save(asset);
+  async save(asset: ManagerDTO): Promise<ManagerDTO> {
+    return mapManager(await this.managerRepository.save(asset));
   }
 }

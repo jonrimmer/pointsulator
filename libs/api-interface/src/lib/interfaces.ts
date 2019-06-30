@@ -1,9 +1,12 @@
-export interface AssetDTO {
+export interface AssetRef {
   id: number;
   name: string;
+}
+
+export interface AssetDTO extends AssetRef {
   team: string;
   type: AssetType;
-  manager?: ManagerDTO;
+  owner?: ManagerRef;
 }
 
 export enum AssetType {
@@ -13,11 +16,14 @@ export enum AssetType {
   Striker = 'Striker'
 }
 
-export interface ManagerDTO {
+export interface ManagerRef {
   id: number;
   name: string;
+}
+
+export interface ManagerDTO extends ManagerRef {
   teamName: string;
-  squad?: AssetDTO[];
+  squad?: AssetRef[];
 }
 
 export enum EventType {
@@ -30,16 +36,15 @@ export interface EventDTO {
   type: EventType;
 }
 
-export interface TeamItemDTO {
-  assetId: number;
+export interface TeamSheetItemDTO {
+  asset: AssetRef;
   substitute: boolean;
-  didNotPlay: boolean;
 }
 
-export interface TeamDTO {
-  managerId: number;
-  createdDate: Date;
-  items: TeamItemDTO[];
+export interface TeamSheetDTO {
+  manager: ManagerRef;
+  items: TeamSheetItemDTO[];
+  validFrom: any;
 }
 
 export interface WeekDTO {

@@ -30,7 +30,8 @@ const managersPageReducer = createDataPageReducer<ManagerDTO>(
   () => ({
     id: null,
     name: null,
-    teamName: null
+    teamName: null,
+    squad: null
   })
 );
 

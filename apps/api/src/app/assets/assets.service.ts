@@ -2,7 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Asset } from './asset.entity';
 import { Repository } from 'typeorm';
+import { AssetDTO } from '@pointsulator/api-interface';
 
+function mapAsset(a: Asset): AssetDTO {
+  return {
+    id: a.id,
+    name: a.name,
+    team: a.team,
+    type: a.type,
+    owner: a.owner
+      ? {
+          id: a.owner.id,
+          name: a.owner.name
+        }
+      : null
+  };
+}
 @Injectable()
 export class AssetsService {
   constructor(
@@ -10,17 +25,19 @@ export class AssetsService {
     private readonly assetRepository: Repository<Asset>
   ) {}
 
-  findAll(): Promise<Asset[]> {
-    return this.assetRepository.find({
+  async findAll(): Promise<AssetDTO[]> {
+    const assets = await this.assetRepository.find({
       relations: ['owner']
     });
+
+    return assets.map(mapAsset);
   }
 
-  findById(id: number): Promise<Asset> {
-    return this.assetRepository.findOne(id);
+  async findById(id: number): Promise<AssetDTO> {
+    return mapAsset(await this.assetRepository.findOne(id));
   }
 
-  save(asset: Asset) {
-    return this.assetRepository.save(asset);
+  async save(asset: AssetDTO) {
+    return mapAsset(await this.assetRepository.save(asset));
   }
 }

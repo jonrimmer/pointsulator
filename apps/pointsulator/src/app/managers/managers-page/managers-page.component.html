@@ -47,6 +47,13 @@
       <td mat-cell *matCellDef="let manager">{{ manager.teamName }}</td>
     </ng-container>
 
+    <ng-container matColumnDef="links">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Team Name</th>
+      <td mat-cell *matCellDef="let manager">
+        <a [routerLink]="[manager.id, 'team-sheets']"
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="editActions">
       <td mat-cell *matCellDef>
         <button

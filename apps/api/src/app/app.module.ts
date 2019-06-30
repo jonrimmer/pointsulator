@@ -5,6 +5,8 @@ import { getConnectionOptions } from 'typeorm';
 import { Asset } from './assets/asset.entity';
 import { Manager } from './managers/manager.entity';
 import { ManagersModule } from './managers/managers.module';
+import { TeamSheetsModule } from './team-sheets/team-sheets.module';
+import { TeamSheet, TeamSheetItem } from './team-sheets/team-sheet.entity';
 
 @Module({
   imports: [
@@ -14,12 +16,13 @@ import { ManagersModule } from './managers/managers.module';
 
         return {
           ...connectionOptions,
-          entities: [Asset, Manager]
+          entities: [Asset, Manager, TeamSheet, TeamSheetItem]
         };
       }
     }),
     AssetsModule,
-    ManagersModule
+    ManagersModule,
+    TeamSheetsModule
   ]
 })
 export class AppModule {}

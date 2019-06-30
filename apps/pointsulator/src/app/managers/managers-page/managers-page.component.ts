@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ManagerDTO } from '../../../../../../libs/api-interface/src';
+import { ManagerDTO } from '@pointsulator/api-interface';
 import { State, managerPageSelectors } from '../../reducers';
 import { Store } from '@ngrx/store';
 import { MatSort } from '@angular/material';
@@ -25,7 +25,8 @@ export class ManagersPageComponent extends DataPage<ManagerDTO>
     this.editForm = new FormGroup({
       id: new FormControl(null),
       name: new FormControl(null),
-      teamName: new FormControl(null)
+      teamName: new FormControl(null),
+      squad: new FormControl(null)
     });
   }
 }

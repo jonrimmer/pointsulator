@@ -29,6 +29,9 @@ import { WeeksListPageComponent } from './weeks/weeks-list-page/weeks-list-page.
 import { WeekPageComponent } from './weeks/week-page/week-page.component';
 import { ManagersPageComponent } from './managers/managers-page/managers-page.component';
 import { ManagersEffects } from './managers/managers.effects';
+import { TeamSheetEffects } from './team-sheet/team-sheet.effects';
+import { TeamSheetPageComponent } from './team-sheet/team-sheet-page/team-sheet-page.component';
+import { TeamSheetListPageComponent } from './team-sheet/team-sheet-list-page/team-sheet-list-page.component';
 
 export const ROUTES: Route[] = [
   {
@@ -38,6 +41,18 @@ export const ROUTES: Route[] = [
   {
     path: 'managers',
     component: ManagersPageComponent
+  },
+  {
+    path: 'managers/:managerId/team-sheets',
+    component: TeamSheetListPageComponent
+  },
+  {
+    path: 'managers/:managerId/team-sheets/add',
+    component: TeamSheetPageComponent
+  },
+  {
+    path: 'managers/:managerId/team-sheets/:teamSheetId',
+    component: TeamSheetPageComponent
   },
   {
     path: 'weeks',
@@ -60,7 +75,9 @@ export const ROUTES: Route[] = [
     AssetsPageComponent,
     WeeksListPageComponent,
     WeekPageComponent,
-    ManagersPageComponent
+    ManagersPageComponent,
+    TeamSheetPageComponent,
+    TeamSheetListPageComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +85,7 @@ export const ROUTES: Route[] = [
     NoopAnimationsModule,
     RouterModule.forRoot(ROUTES),
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([AssetsEffects, ManagersEffects]),
+    EffectsModule.forRoot([AssetsEffects, ManagersEffects, TeamSheetEffects]),
     LayoutModule,
     MatFormFieldModule,
     MatInputModule,

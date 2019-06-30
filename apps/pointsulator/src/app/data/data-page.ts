@@ -25,7 +25,11 @@ export class DataPage<T extends { id: any }> implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subs.add(this.matSort.sortChange.subscribe(this.dataActions.sort));
+    this.subs.add(
+      this.matSort.sortChange.subscribe(sort =>
+        this.store.dispatch(this.dataActions.sort(sort))
+      )
+    );
     this.subs.add(
       this.store.select(this.dataSelectors.getEditingRow).subscribe(row => {
         this.editingRow = row;

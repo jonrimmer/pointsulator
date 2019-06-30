@@ -27,11 +27,12 @@ export class TeamSheetListPageComponent implements OnInit {
     this.route.paramMap
       .pipe(
         map(params => params.get('managerId')),
-        filter(managerId => !!managerId),
-        map(managerId => parseInt(managerId, 10))
+        filter(managerId => !!managerId)
       )
       .subscribe(managerId => {
-        this.store.dispatch(TeamSheetActions.loadTeamSheets(managerId));
+        this.store.dispatch(
+          TeamSheetActions.loadTeamSheets(Number.parseInt(managerId, 10))
+        );
       });
   }
 }

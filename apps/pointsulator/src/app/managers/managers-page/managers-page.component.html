@@ -48,9 +48,9 @@
     </ng-container>
 
     <ng-container matColumnDef="links">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Team Name</th>
+      <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let manager">
-        <a [routerLink]="[manager.id, 'team-sheets']"
+        <a [routerLink]="[manager.id, 'team-sheets']">View Teamsheets</a>
       </td>
     </ng-container>
 

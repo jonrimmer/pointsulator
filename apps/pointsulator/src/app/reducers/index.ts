@@ -38,6 +38,12 @@ export const selectAllAssets = createSelector(
   fromAssets.entitySelectors.selectAll
 );
 
+export const selectAssetForManager = (managerId: number) =>
+  createSelector(
+    selectAllAssets,
+    assets => assets.filter(a => a.owner && a.owner.id === managerId)
+  );
+
 export const assetsPageSelectors = createDataPageSelectors(
   selectAssetsState,
   fromAssets.entitySelectors
@@ -79,3 +85,10 @@ export const selectTeamSheets = createSelector(
   selectTeamSheetsState,
   fromTeamSheets.selectAll
 );
+
+export const selectTeamSheet = (teamSheetId: number) =>
+  createSelector(
+    selectTeamSheetsState,
+    fromTeamSheets.selectEntities,
+    entities => entities.entities[teamSheetId]
+  );

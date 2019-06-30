@@ -13,13 +13,13 @@ import { Observable } from 'rxjs';
   styleUrls: ['./assets-page.component.css']
 })
 export class AssetsPageComponent extends DataPage<AssetDTO> implements OnInit {
-  displayedColumns = ['actions', 'id', 'team', 'type', 'name', 'owner'];
+  displayedColumns = ['actions', 'id', 'name', 'team', 'type', 'owner'];
   editColumns = [
     'editActions',
     'id',
+    'editName',
     'editTeam',
     'editType',
-    'editName',
     'editOwner'
   ];
   managers$: Observable<ManagerRef[]>;

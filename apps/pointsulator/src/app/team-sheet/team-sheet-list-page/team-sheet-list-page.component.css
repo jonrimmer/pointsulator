@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.add-teamsheet {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+}
+
+.teamsheet-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.col-actions {
+  width: 100px;
+}
+
+.col-id {
+  width: 10%;
+}

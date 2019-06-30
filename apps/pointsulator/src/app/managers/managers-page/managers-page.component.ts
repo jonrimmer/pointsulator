@@ -14,7 +14,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class ManagersPageComponent extends DataPage<ManagerDTO>
   implements OnInit {
-  displayedColumns = ['actions', 'id', 'name', 'teamName'];
+  displayedColumns = ['actions', 'id', 'name', 'teamName', 'links'];
   editColumns = ['editActions', 'id', 'editName', 'editTeamName'];
 
   @ViewChild(MatSort, { static: true }) matSort: MatSort;

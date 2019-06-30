@@ -2,7 +2,7 @@
   type="button"
   mat-fab
   color="accent"
-  class="add-manager"
+  class="add-teamsheet"
   [routerLink]="['.', 'add']"
 >
   <mat-icon>add</mat-icon>
@@ -13,7 +13,7 @@
   [dataSource]="teamSheets$"
   matSort
   #dataTable
-  class="managers-table"
+  class="teamsheet-table"
 >
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id">

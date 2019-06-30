@@ -28,7 +28,7 @@ export class TeamSheetsService {
     private readonly teamSheetRepo: Repository<TeamSheet>
   ) {}
 
-  public async findByManagerId(id: string) {
+  public async findByManagerId(id: number) {
     return this.teamSheetRepo.find({
       where: {
         managerId: id

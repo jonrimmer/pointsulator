@@ -32,6 +32,8 @@ import { ManagersEffects } from './managers/managers.effects';
 import { TeamSheetEffects } from './team-sheet/team-sheet.effects';
 import { TeamSheetPageComponent } from './team-sheet/team-sheet-page/team-sheet-page.component';
 import { TeamSheetListPageComponent } from './team-sheet/team-sheet-list-page/team-sheet-list-page.component';
+import { CreateTeamSheetPageComponent } from './team-sheet/create-team-sheet-page/create-team-sheet-page.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 
 export const ROUTES: Route[] = [
   {
@@ -48,7 +50,7 @@ export const ROUTES: Route[] = [
   },
   {
     path: 'managers/:managerId/team-sheets/add',
-    component: TeamSheetPageComponent
+    component: CreateTeamSheetPageComponent
   },
   {
     path: 'managers/:managerId/team-sheets/:teamSheetId',
@@ -77,7 +79,9 @@ export const ROUTES: Route[] = [
     WeekPageComponent,
     ManagersPageComponent,
     TeamSheetPageComponent,
-    TeamSheetListPageComponent
+    TeamSheetListPageComponent,
+    CreateTeamSheetPageComponent,
+    PageHeaderComponent
   ],
   imports: [
     BrowserModule,

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { State, selectTeamSheets } from '../../reducers';
+import { State } from '../../reducers';
 import { ActivatedRoute } from '@angular/router';
 import { map, filter } from 'rxjs/operators';
 import * as TeamSheetActions from '../team-sheet.actions';
 import { TeamSheetDTO } from '@pointsulator/api-interface';
 import { Observable } from 'rxjs';
+import { selectTeamSheets } from '../team-sheet.selectors';
 
 @Component({
   selector: 'pt-team-sheet-list-page',

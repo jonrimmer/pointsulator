@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { TeamSheet } from './team-sheet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TeamSheetDTO } from '@pointsulator/api-interface';
+import { Repository, DeepPartial } from 'typeorm';
+import { TeamSheetDTO, TeamSheetConfigDTO } from '@pointsulator/api-interface';
 
-function mapTeamSheet(ts: TeamSheet): TeamSheetDTO {
+function mapTeamSheetToDTO(ts: TeamSheet): TeamSheetDTO {
   return {
     manager: {
       id: ts.manager.id,
@@ -18,6 +18,21 @@ function mapTeamSheet(ts: TeamSheet): TeamSheetDTO {
         name: i.asset.name
       }
     }))
+  };
+}
+
+function mapEntityFromDTO(ts: TeamSheetConfigDTO): DeepPartial<TeamSheet> {
+  return {
+    manager: {
+      id: ts.managerId
+    },
+    items: ts.items.map(item => ({
+      substitute: item.substitute || false,
+      asset: {
+        id: item.assetId
+      }
+    })),
+    validFrom: new Date(ts.validFrom)
   };
 }
 
@@ -37,7 +52,17 @@ export class TeamSheetsService {
     });
   }
 
-  public async addTeamSheet(teamSheet: TeamSheetDTO) {
-    return mapTeamSheet(await this.teamSheetRepo.save(teamSheet));
+  public async findById(id: number) {
+    const result = await this.teamSheetRepo.findOne(id, {
+      relations: ['manager', 'items', 'items.asset']
+    });
+
+    return mapTeamSheetToDTO(result);
+  }
+
+  public async addTeamSheet(teamSheet: TeamSheetConfigDTO) {
+    const toSave = mapEntityFromDTO(teamSheet);
+    const result = await this.teamSheetRepo.save(toSave);
+    return this.findById(result.id);
   }
 }

@@ -1,13 +1,12 @@
 <pt-page-header>
   <h2 class="mat-h2">Create Team Sheet</h2>
+  <button mat-raised-button class="save" (click)="save(tsForm)" color="accent">
+    Save
+  </button>
 </pt-page-header>
-<form [formGroup]="form" class="control-container">
-  <mat-form-field>
-    <mat-label>Valid From Week</mat-label>
-    <select matNativeControl>
-      <option *ngFor="let week of weeks" [ngValue]="week.num">
-        Week #{{ week.num }} - {{ week.date | date: 'short' }}
-      </option>
-    </select>
-  </mat-form-field>
-</form>
+
+<pt-team-sheet-form
+  #tsForm
+  [assets]="assets$ | async"
+  [weeks]="weeks"
+></pt-team-sheet-form>

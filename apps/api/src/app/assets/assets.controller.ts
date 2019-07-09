@@ -6,7 +6,8 @@ import {
   Body,
   BadRequestException,
   ParseIntPipe,
-  Put
+  Put,
+  Query
 } from '@nestjs/common';
 import { AssetsService } from './assets.service';
 import { AssetDTO } from '@pointsulator/api-interface';
@@ -16,8 +17,8 @@ export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
   @Get()
-  async findAll(): Promise<AssetDTO[]> {
-    return this.assetsService.findAll();
+  async findAll(@Query('owner') ownerId: number): Promise<AssetDTO[]> {
+    return this.assetsService.findAll(ownerId);
   }
 
   @Get(':id')

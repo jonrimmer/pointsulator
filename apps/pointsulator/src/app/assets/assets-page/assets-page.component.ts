@@ -6,7 +6,6 @@ import { AssetDTO, ManagerRef } from '@pointsulator/api-interface';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataPage } from '../../data/data-page';
 import { Observable } from 'rxjs';
-
 @Component({
   selector: 'pt-assets-page',
   templateUrl: './assets-page.component.html',

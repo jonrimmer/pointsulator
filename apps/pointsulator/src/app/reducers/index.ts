@@ -76,19 +76,3 @@ export const managerPageSelectors = createDataPageSelectors(
   selectManagersState,
   fromManagers.entitySelectors
 );
-
-export const selectTeamSheetsState = createFeatureSelector<
-  fromTeamSheets.TeamSheetState
->('teamSheets');
-
-export const selectTeamSheets = createSelector(
-  selectTeamSheetsState,
-  fromTeamSheets.selectAll
-);
-
-export const selectTeamSheet = (teamSheetId: number) =>
-  createSelector(
-    selectTeamSheetsState,
-    fromTeamSheets.selectEntities,
-    entities => entities.entities[teamSheetId]
-  );

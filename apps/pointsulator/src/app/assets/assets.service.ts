@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AssetDTO } from '@pointsulator/api-interface';
 import { Observable } from 'rxjs';
@@ -26,5 +26,11 @@ export class AssetsService {
 
   addAsset(asset: AssetDTO): Observable<AssetDTO> {
     return this.http.post<AssetDTO>(ASSETS_ENDPOINT, asset);
+  }
+
+  getForOwner(ownerId: number) {
+    return this.http.get<AssetDTO[]>(ASSETS_ENDPOINT, {
+      params: new HttpParams().append('owner', ownerId.toString())
+    });
   }
 }

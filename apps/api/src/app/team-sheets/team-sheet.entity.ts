@@ -18,7 +18,9 @@ export class TeamSheet {
   @Column()
   validFrom: Date;
 
-  @OneToMany(() => TeamSheetItem, item => item.teamSheet)
+  @OneToMany(() => TeamSheetItem, item => item.teamSheet, {
+    cascade: true
+  })
   items: TeamSheetItem[];
 
   @ManyToOne(() => Manager, manager => manager.teamSheets)
@@ -30,7 +32,9 @@ export class TeamSheetItem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    default: false
+  })
   substitute: boolean;
 
   @ManyToOne(() => TeamSheet, teamSheet => teamSheet.items)

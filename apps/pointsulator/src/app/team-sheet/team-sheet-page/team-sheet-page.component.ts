@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { State, selectTeamSheet } from '../../reducers';
+import { State } from '../../reducers';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { TeamSheetDTO } from '@pointsulator/api-interface';
 import { map } from 'rxjs/operators';
+import { selectTeamSheet } from '../team-sheet.selectors';
 
 @Component({
   selector: 'pt-team-sheet-page',

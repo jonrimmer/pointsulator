@@ -18,7 +18,8 @@ import {
   MatTableModule,
   MatSortModule,
   MatInputModule,
-  MatFormFieldModule
+  MatFormFieldModule,
+  MatCheckboxModule
 } from '@angular/material';
 import { AssetsPageComponent } from './assets/assets-page/assets-page.component';
 import { AssetsEffects } from './assets/assets.effects';
@@ -34,6 +35,7 @@ import { TeamSheetPageComponent } from './team-sheet/team-sheet-page/team-sheet-
 import { TeamSheetListPageComponent } from './team-sheet/team-sheet-list-page/team-sheet-list-page.component';
 import { CreateTeamSheetPageComponent } from './team-sheet/create-team-sheet-page/create-team-sheet-page.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { TeamSheetFormComponent } from './team-sheet/team-sheet-form/team-sheet-form.component';
 
 export const ROUTES: Route[] = [
   {
@@ -67,7 +69,7 @@ export const ROUTES: Route[] = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'weeks'
+    redirectTo: 'assets'
   }
 ];
 
@@ -81,7 +83,8 @@ export const ROUTES: Route[] = [
     TeamSheetPageComponent,
     TeamSheetListPageComponent,
     CreateTeamSheetPageComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
+    TeamSheetFormComponent
   ],
   imports: [
     BrowserModule,
@@ -100,6 +103,7 @@ export const ROUTES: Route[] = [
     MatListModule,
     MatTableModule,
     MatSortModule,
+    MatCheckboxModule,
     FormsModule,
     ReactiveFormsModule,
     StoreDevtoolsModule.instrument({

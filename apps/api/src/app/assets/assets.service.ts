@@ -25,9 +25,10 @@ export class AssetsService {
     private readonly assetRepository: Repository<Asset>
   ) {}
 
-  async findAll(): Promise<AssetDTO[]> {
+  async findAll(ownerId?: number): Promise<AssetDTO[]> {
     const assets = await this.assetRepository.find({
-      relations: ['owner']
+      relations: ['owner'],
+      where: ownerId ? { managerId: ownerId } : null
     });
 
     return assets.map(mapAsset);

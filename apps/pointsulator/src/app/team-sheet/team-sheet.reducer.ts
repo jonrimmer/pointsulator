@@ -1,10 +1,15 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { TeamSheetDTO } from '@pointsulator/api-interface';
+import { TeamSheetDTO, AssetDTO } from '@pointsulator/api-interface';
 import * as TeamSheetActions from './team-sheet.actions';
-
 export interface TeamSheetState extends EntityState<TeamSheetDTO> {
   // additional entities state properties
+  draft: {
+    items: {
+      playing: boolean;
+      asset: AssetDTO;
+    }[];
+  };
 }
 
 export const adapter: EntityAdapter<TeamSheetDTO> = createEntityAdapter<
@@ -13,6 +18,9 @@ export const adapter: EntityAdapter<TeamSheetDTO> = createEntityAdapter<
 
 export const initialState: TeamSheetState = adapter.getInitialState({
   // additional entity state properties
+  draft: {
+    items: []
+  }
 });
 
 const teamSheetReducer = createReducer(
@@ -44,7 +52,16 @@ const teamSheetReducer = createReducer(
   on(TeamSheetActions.loadTeamSheetsSuccess, (state, action) =>
     adapter.addAll(action.teamSheets, state)
   ),
-  on(TeamSheetActions.clearTeamSheets, state => adapter.removeAll(state))
+  on(TeamSheetActions.clearTeamSheets, state => adapter.removeAll(state)),
+  on(TeamSheetActions.initCreateTeamSheet, (state, { assets }) => ({
+    ...state,
+    draft: {
+      items: assets.map(asset => ({
+        playing: false,
+        asset
+      }))
+    }
+  }))
 );
 
 export function reducer(state: TeamSheetState | undefined, action: Action) {

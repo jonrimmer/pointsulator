@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 
-import { TeamSheetDTO } from '@pointsulator/api-interface';
+import { TeamSheetDTO, AssetDTO } from '@pointsulator/api-interface';
 
 export const loadTeamSheets = createAction(
   '[TeamSheet/API] Load TeamSheets',
@@ -54,3 +54,13 @@ export const deleteTeamSheets = createAction(
 );
 
 export const clearTeamSheets = createAction('[TeamSheet/API] Clear TeamSheets');
+
+export const startCreateTeamSheet = createAction(
+  '[TeamSheet/API] Start create',
+  (managerId: number) => ({ managerId })
+);
+
+export const initCreateTeamSheet = createAction(
+  '[TeamSheet/API] Init create',
+  props<{ assets: AssetDTO[] }>()
+);

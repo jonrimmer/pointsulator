@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.prod';
-import { TeamSheetDTO } from '@pointsulator/api-interface';
+import { TeamSheetDTO, TeamSheetConfigDTO } from '@pointsulator/api-interface';
 import { Observable } from 'rxjs';
 
 const TEAM_SHEETS_ENDPOINT = `${environment.apiUrl}/team-sheets`;
@@ -16,5 +16,9 @@ export class TeamSheetApiService {
     return this.http.get<TeamSheetDTO[]>(TEAM_SHEETS_ENDPOINT, {
       params: new HttpParams().append('manager', mangerId.toString())
     });
+  }
+
+  create(teamSheet: TeamSheetConfigDTO): Observable<TeamSheetDTO> {
+    return this.http.post<TeamSheetDTO>(TEAM_SHEETS_ENDPOINT, teamSheet);
   }
 }

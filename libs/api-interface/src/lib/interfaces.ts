@@ -52,3 +52,14 @@ export interface WeekDTO {
   startDate: Date;
   teams: [];
 }
+
+export interface TeamSheetConfigItemDTO {
+  assetId: number;
+  substitute: boolean;
+}
+
+export interface TeamSheetConfigDTO {
+  managerId: number;
+  items: TeamSheetConfigItemDTO[];
+  validFrom: any;
+}

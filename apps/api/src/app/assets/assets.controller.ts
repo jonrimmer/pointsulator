@@ -17,8 +17,10 @@ export class AssetsController {
   constructor(private readonly assetsService: AssetsService) {}
 
   @Get()
-  async findAll(@Query('owner') ownerId: number): Promise<AssetDTO[]> {
-    return this.assetsService.findAll(ownerId);
+  async findAll(@Query() query: any): Promise<AssetDTO[]> {
+    return this.assetsService.findAll(
+      query.owner ? parseInt(query.owner, 10) : null
+    );
   }
 
   @Get(':id')

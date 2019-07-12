@@ -1,11 +1,22 @@
-<button
-  type="button"
-  mat-fab
-  (click)="addWeek()"
-  color="accent"
-  class="add-week"
->
-  <mat-icon>add</mat-icon>
-</button>
+<table mat-table [dataSource]="weeks$" matSort>
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id">
+      Id
+    </th>
+    <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+  </ng-container>
 
-<table mat-table></table>
+  <ng-container matColumnDef="validFrom">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Commencing</th>
+    <td mat-cell *matCellDef="let row">
+      {{ row.startDate | date: 'DDD dd-MMM-yyyy' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="validFrom">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+    <td mat-cell *matCellDef="let row">
+      {{ row.status }}
+    </td>
+  </ng-container>
+</table>

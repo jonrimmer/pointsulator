@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, switchMap, tap, map } from 'rxjs/operators';
-import { FormGroup, FormControl, FormArray } from '@angular/forms';
-import * as TeamSheetActions from '../team-sheet.actions';
+import { switchMap, tap, map } from 'rxjs/operators';
 import { TeamSheetApiService } from '../team-sheet-api.service';
 import { AssetsService } from '../../assets/assets.service';
 import { AssetDTO } from '@pointsulator/api-interface';

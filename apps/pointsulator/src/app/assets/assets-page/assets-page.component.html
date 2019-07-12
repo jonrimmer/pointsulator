@@ -110,7 +110,12 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Owner</th>
       <td mat-cell *matCellDef>
         <mat-form-field>
-          <select matNativeControl formControlName="owner">
+          <select
+            matNativeControl
+            formControlName="owner"
+            [compareWith]="compareManagers"
+          >
+            <option [ngValue]="null">Unowned</option>
             <option
               *ngFor="let manager of (managers$ | async)"
               [ngValue]="manager"

@@ -13,7 +13,7 @@ export enum AssetType {
   Goalkeeper = 'Goalkeeper',
   Defence = 'Defence',
   Midfielder = 'Midfielder',
-  Striker = 'Striker'
+  Forward = 'Forward'
 }
 
 export interface ManagerRef {
@@ -37,7 +37,7 @@ export interface EventDTO {
 }
 
 export interface TeamSheetItemDTO {
-  asset: AssetRef;
+  asset: AssetDTO;
   substitute: boolean;
 }
 
@@ -47,10 +47,53 @@ export interface TeamSheetDTO {
   validFrom: any;
 }
 
+export interface ScoreboardEntryDTO {
+  manager: ManagerRef;
+  points: number;
+}
+
+export enum AssetEventType {
+  Goal = 'Goal',
+  OwnGoal = 'Own Goal',
+  RedCard = 'Red Card',
+  CleanSheet = 'Clean Sheet',
+  Assist = 'Assist'
+}
+
+export interface AssetEventDTO {
+  id?: number;
+  type: AssetEventType;
+  count: number;
+  owner: ManagerRef;
+}
+
+export enum WeekStatus {
+  Completed = 'Completed',
+  InProgress = 'In Progress',
+  Future = 'Future'
+}
+
 export interface WeekDTO {
   id: number;
+  startDate: number;
+  status: WeekStatus;
+}
+
+export interface WeekDetailsDTO {
+  id: number;
   startDate: Date;
-  teams: [];
+  teams: TeamSheetDTO[];
+  scoreboard: {
+    before: ScoreboardEntryDTO[];
+    after?: ScoreboardEntryDTO[];
+  };
+  assets: WeekAssetDTO[];
+}
+
+export interface WeekAssetDTO {
+  assetId: number;
+  didNotPlay: boolean;
+  events: AssetEventDTO[];
 }
 
 export interface TeamSheetConfigItemDTO {

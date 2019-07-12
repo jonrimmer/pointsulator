@@ -28,7 +28,7 @@ export class AssetsService {
   async findAll(ownerId?: number): Promise<AssetDTO[]> {
     const assets = await this.assetRepository.find({
       relations: ['owner'],
-      where: ownerId ? { managerId: ownerId } : null
+      where: ownerId ? { owner: { id: ownerId } } : null
     });
 
     return assets.map(mapAsset);
@@ -38,7 +38,11 @@ export class AssetsService {
     return mapAsset(await this.assetRepository.findOne(id));
   }
 
-  async save(asset: AssetDTO) {
+  async save(asset: AssetDTO | Asset) {
     return mapAsset(await this.assetRepository.save(asset));
+  }
+
+  async saveMany(assets: Asset[]) {
+    return (await this.assetRepository.save(assets)).map(mapAsset);
   }
 }

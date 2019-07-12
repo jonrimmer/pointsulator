@@ -33,7 +33,7 @@ const assetsPageReducer = createDataPageReducer<AssetDTO>(
     name: null,
     team: null,
     owner: null,
-    type: AssetType.Striker
+    type: AssetType.Forward
   })
 );
 

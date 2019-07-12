@@ -3,17 +3,35 @@
     <mat-label>Valid From Week</mat-label>
     <select matNativeControl formControlName="week">
       <option *ngFor="let week of weeks" [ngValue]="week.num">
-        Week #{{ week.num }} - {{ week.date | date: 'short' }}
+        Week #{{ week.num }}, commencing Friday
+        {{ week.date | date: 'dd-MM-yyyy' }}
       </option>
     </select>
   </mat-form-field>
 
   <h3>Assets</h3>
 
+  <div class="pt-errors" *ngIf="assetsArray.invalid">
+    <p>Your selected team is not valid:</p>
+    <ul>
+      <li *ngIf="assetsArray.errors['keeper']">
+        You must play exactly one non-subtitute keeper.
+      </li>
+      <li *ngIf="assetsArray.errors['defence']">
+        You must play exactly one non-subtitute defence.
+      </li>
+      <li *ngIf="assetsArray.errors['formation']">
+        You must play a legal formation: Either 4-5-1, 4-4-2, or 4-3-3.
+      </li>
+      <li *ngIf="assetsArray.errors['attack']"></li>
+    </ul>
+  </div>
+
   <table
     mat-table
     [dataSource]="assetsArray.controls"
     matSort
+    (matSortChange)="onSort($event)"
     #dataTable
     class="pick-assets-table"
     formArrayName="assets"
@@ -36,7 +54,7 @@
     </ng-container>
 
     <ng-container matColumnDef="playing">
-      <th mat-header-cell *matHeaderCellDef>Playing</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Playing</th>
       <td mat-cell *matCellDef="let asset; let i = index">
         <ng-container [formGroupName]="i">
           <mat-checkbox formControlName="playing"></mat-checkbox>
@@ -45,7 +63,7 @@
     </ng-container>
 
     <ng-container matColumnDef="substitute">
-      <th mat-header-cell *matHeaderCellDef>Substitute</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Substitute</th>
       <td mat-cell *matCellDef="let asset; let i = index">
         <ng-container [formGroupName]="i">
           <mat-checkbox formControlName="substitute"></mat-checkbox>

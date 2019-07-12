@@ -13,10 +13,7 @@ function mapTeamSheetToDTO(ts: TeamSheet): TeamSheetDTO {
     validFrom: ts.validFrom,
     items: ts.items.map(i => ({
       substitute: i.substitute,
-      asset: {
-        id: i.asset.id,
-        name: i.asset.name
-      }
+      asset: i.asset
     }))
   };
 }
@@ -46,7 +43,7 @@ export class TeamSheetsService {
   public async findByManagerId(id: number) {
     return this.teamSheetRepo.find({
       where: {
-        managerId: id
+        manager: { id }
       },
       relations: ['manager', 'items', 'items.asset']
     });

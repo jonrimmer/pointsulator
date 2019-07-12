@@ -16,7 +16,7 @@ export class Asset {
   @Column({
     type: 'enum',
     enum: AssetType,
-    default: AssetType.Striker
+    default: AssetType.Forward
   })
   type: AssetType;
 

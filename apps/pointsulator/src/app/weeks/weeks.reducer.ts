@@ -1,10 +1,10 @@
 import { EntityState, createEntityAdapter } from '@ngrx/entity';
-import { WeekDTO } from '@pointsulator/api-interface';
+import { WeekDetailsDTO } from '@pointsulator/api-interface';
 import { Action, createReducer } from '@ngrx/store';
 
-export interface WeeksState extends EntityState<WeekDTO> {}
+export interface WeeksState extends EntityState<WeekDetailsDTO> {}
 
-export const adapter = createEntityAdapter<WeekDTO>();
+export const adapter = createEntityAdapter<WeekDetailsDTO>();
 
 const initialState = adapter.getInitialState();
 

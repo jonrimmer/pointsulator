@@ -36,4 +36,7 @@ export class AssetsPageComponent extends DataPage<AssetDTO> implements OnInit {
       owner: new FormControl(null)
     });
   }
+
+  compareManagers = (a: ManagerRef, b: ManagerRef) =>
+    a && b ? a.id === b.id : a === b;
 }

@@ -1,1 +1,22 @@
-<h2>New Team Sheet</h2>
+<pt-page-header>
+  <h2 class="mat-h2">Edit Team Sheet</h2>
+  <div class="actions">
+    <button
+      mat-raised-button
+      class="save"
+      (click)="save(tsForm)"
+      color="accent"
+    >
+      Save
+    </button>
+
+    <button mat-raised-button class="delete" (click)="delete()">Delete</button>
+  </div>
+</pt-page-header>
+
+<pt-team-sheet-form
+  #tsForm
+  [assets]="assets$ | async"
+  [weeks]="weeks$ | async"
+  [teamSheet]="teamSheet$ | async"
+></pt-team-sheet-form>

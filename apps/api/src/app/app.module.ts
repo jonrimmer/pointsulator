@@ -9,7 +9,7 @@ import { TeamSheetsModule } from './team-sheets/team-sheets.module';
 import { TeamSheet, TeamSheetItem } from './team-sheets/team-sheet.entity';
 import { StartupService } from './startup/startup.service';
 import { WeeksModule } from './weeks/weeks.module';
-import { Week, WeekEvent } from './weeks/week.entity';
+import { Week, WeekEvent, WeekAsset } from './weeks/week.entity';
 
 @Module({
   imports: [
@@ -19,7 +19,15 @@ import { Week, WeekEvent } from './weeks/week.entity';
 
         return {
           ...connectionOptions,
-          entities: [Asset, Manager, TeamSheet, TeamSheetItem, Week, WeekEvent]
+          entities: [
+            Asset,
+            Manager,
+            TeamSheet,
+            TeamSheetItem,
+            Week,
+            WeekAsset,
+            WeekEvent
+          ]
         };
       }
     }),

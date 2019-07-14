@@ -4,11 +4,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, tap, map } from 'rxjs/operators';
 import { TeamSheetApiService } from '../team-sheet-api.service';
 import { AssetsService } from '../../assets/assets.service';
-import { AssetDTO } from '@pointsulator/api-interface';
+import {
+  AssetDTO,
+  TeamSheetConfigDTO,
+  AssetType,
+  WeekDTO
+} from '@pointsulator/api-interface';
 import {
   TeamSheetFormComponent,
   TeamSheetFormItem
 } from '../team-sheet-form/team-sheet-form.component';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { WeeksApiService } from '../../weeks/weeks-api.service';
 
 interface Week {
   num: number;
@@ -22,27 +29,17 @@ interface Week {
 })
 export class CreateTeamSheetPageComponent implements OnInit, OnDestroy {
   subs = new Subscription();
-  weeks: Week[] = [];
   assets$: Observable<AssetDTO[]>;
+  weeks$: Observable<WeekDTO[]>;
   managerId: number;
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly assetsApi: AssetsService,
     private readonly teamSheetApi: TeamSheetApiService,
+    private readonly weeksApi: WeeksApiService,
     private readonly router: Router
-  ) {
-    let seasonStart = Date.now();
-
-    for (let i = 0; i < 10; i++) {
-      this.weeks.push({
-        num: i + 1,
-        date: seasonStart
-      });
-
-      seasonStart += 1000 * 60 * 60 * 24 * 7;
-    }
-  }
+  ) {}
 
   ngOnInit() {
     this.assets$ = this.route.paramMap.pipe(
@@ -52,6 +49,7 @@ export class CreateTeamSheetPageComponent implements OnInit, OnDestroy {
       }),
       switchMap(managerId => this.assetsApi.getForOwner(managerId))
     );
+    this.weeks$ = this.weeksApi.getWeeks();
   }
 
   ngOnDestroy() {
@@ -59,19 +57,39 @@ export class CreateTeamSheetPageComponent implements OnInit, OnDestroy {
   }
 
   save(form: TeamSheetFormComponent) {
-    const config = {
-      managerId: this.managerId,
-      items: form.assetsArray.value
-        .filter((item: TeamSheetFormItem) => item.playing)
-        .map((item: TeamSheetFormItem) => ({
-          assetId: item.asset.id,
-          substitute: item.substitute
-        })),
-      validFrom: form.week.value
-    };
+    if (form.form.valid) {
+      const precedences = {
+        [AssetType.Goalkeeper]: 1,
+        [AssetType.Defence]: 1,
+        [AssetType.Midfielder]: 1,
+        [AssetType.Forward]: 1
+      };
 
-    this.teamSheetApi.create(config).subscribe(() => {
-      this.router.navigate(['..']);
-    });
+      const config: TeamSheetConfigDTO = {
+        managerId: this.managerId,
+        items: form.assetsArray.value
+          .filter((item: TeamSheetFormItem) => item.playing)
+          .map((item: TeamSheetFormItem) => {
+            const result = {
+              assetId: item.asset.id,
+              substitute: item.substitute,
+              precedence: item.substitute ? precedences[item.asset.type] : null
+            };
+
+            if (item.substitute) {
+              precedences[item.asset.type] += 1;
+            }
+
+            return result;
+          }),
+        weekId: form.week.value
+      };
+
+      this.teamSheetApi.create(config).subscribe(() => {
+        this.router.navigate(['..'], { relativeTo: this.route });
+      });
+    } else {
+      form.form.markAllAsTouched();
+    }
   }
 }

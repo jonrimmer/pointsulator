@@ -1,5 +1,10 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { AssetDTO, AssetType } from '@pointsulator/api-interface';
+import { Component, OnInit, Input, ViewChild, OnChanges } from '@angular/core';
+import {
+  AssetDTO,
+  AssetType,
+  WeekDTO,
+  TeamSheetDTO
+} from '@pointsulator/api-interface';
 import {
   FormGroup,
   FormControl,
@@ -8,45 +13,23 @@ import {
   ValidatorFn,
   ValidationErrors
 } from '@angular/forms';
-import { MatTable, MatSort, Sort } from '@angular/material';
+import { MatTable, MatSort, Sort, fadeInItems } from '@angular/material';
+import { runInThisContext } from 'vm';
 
 const isSingular = (asset: AssetDTO) =>
   asset.type === AssetType.Defence || asset.type === AssetType.Goalkeeper;
 
-function compare(a: number | string, b: number | string, isAsc: boolean) {
-  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-}
-
-function compareBoolean(
-  a: boolean,
-  b: boolean,
-  a_id: number,
-  b_id: number,
-  isAsc: boolean
-) {
-  const result = a
-    ? b
-      ? compare(a_id, b_id, true)
-      : 1
-    : b
-    ? -1
-    : compare(a_id, b_id, true);
-  return isAsc ? result : result * -1;
-}
-
+const assetTypeOrder = [
+  AssetType.Goalkeeper,
+  AssetType.Defence,
+  AssetType.Midfielder,
+  AssetType.Forward
+];
 export interface TeamSheetFormItem {
   asset: AssetDTO;
   playing: boolean;
   substitute: boolean;
 }
-
-const SORTS = {
-  name: (value: TeamSheetFormItem) => value.asset.name,
-  type: (value: TeamSheetFormItem) => value.asset.type,
-  team: (value: TeamSheetFormItem) => value.asset.team,
-  playing: (value: TeamSheetFormItem) => value.playing,
-  substitute: (value: TeamSheetFormItem) => value.substitute
-};
 
 export const legalTeamValidator: ValidatorFn = (
   control: FormArray
@@ -107,12 +90,19 @@ export const legalTeamValidator: ValidatorFn = (
 @Component({
   selector: 'pt-team-sheet-form',
   templateUrl: './team-sheet-form.component.html',
-  styleUrls: ['./team-sheet-form.component.css']
+  styleUrls: ['./team-sheet-form.component.scss']
 })
-export class TeamSheetFormComponent implements OnInit {
+export class TeamSheetFormComponent implements OnInit, OnChanges {
   public week = new FormControl(null, [Validators.required]);
   public assetsArray = new FormArray([], { validators: legalTeamValidator });
-  public displayedColumns = ['name', 'type', 'team', 'playing', 'substitute'];
+  public displayedColumns = [
+    'precedence',
+    'name',
+    'type',
+    'team',
+    'playing',
+    'substitute'
+  ];
 
   public form = new FormGroup({
     week: this.week,
@@ -122,10 +112,11 @@ export class TeamSheetFormComponent implements OnInit {
   @ViewChild('dataTable', { static: true })
   dataTable: MatTable<any>;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  assets: AssetDTO[];
 
-  @Input()
-  public set assets(assets: AssetDTO[]) {
+  @Input('assets')
+  public set assetsInput(assets: AssetDTO[]) {
+    this.assets = assets;
     this.assetsArray.clear();
 
     if (assets) {
@@ -136,7 +127,8 @@ export class TeamSheetFormComponent implements OnInit {
         const ctrl = new FormGroup({
           asset: new FormControl(asset),
           playing: playingCtrl,
-          substitute: subCtrl
+          substitute: subCtrl,
+          precedence: new FormControl()
         });
 
         playingCtrl.valueChanges.subscribe(playing => {
@@ -151,6 +143,8 @@ export class TeamSheetFormComponent implements OnInit {
             value: isSub,
             disabled: !playing
           });
+
+          setTimeout(() => this.sort(), 0);
         });
 
         subCtrl.valueChanges.subscribe(isSub => {
@@ -164,6 +158,8 @@ export class TeamSheetFormComponent implements OnInit {
               }
             });
           }
+
+          setTimeout(() => this.sort(), 0);
         });
 
         this.assetsArray.push(ctrl);
@@ -174,10 +170,10 @@ export class TeamSheetFormComponent implements OnInit {
   }
 
   @Input()
-  public weeks: {
-    num: number;
-    date: number;
-  }[];
+  public weeks: WeekDTO[];
+
+  @Input()
+  public teamSheet: TeamSheetDTO;
 
   assetsOfTypePlaying(type: AssetType) {
     return this.assetsOfType(type).filter(
@@ -195,34 +191,105 @@ export class TeamSheetFormComponent implements OnInit {
 
   ngOnInit() {}
 
-  onSort(sort: Sort) {
-    if (!sort.active) {
+  ngOnChanges(): void {
+    if (this.assets && this.teamSheet && this.weeks) {
+      this.applySheet();
+    }
+  }
+
+  sort() {
+    this.assetsArray.controls.sort((a, b) => {
+      const itemA = a.value as TeamSheetFormItem;
+      const itemB = b.value as TeamSheetFormItem;
+
+      if (itemA.asset.type !== itemB.asset.type) {
+        return (
+          assetTypeOrder[itemA.asset.type] - assetTypeOrder[itemB.asset.type]
+        );
+      }
+
+      if (itemA.playing) {
+        if (!itemB.playing) {
+          return -1;
+        }
+
+        if (itemA.substitute) {
+          if (!itemB.substitute) {
+            return 1;
+          }
+        } else if (itemB.substitute) {
+          return -1;
+        }
+      } else if (itemB.playing) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    this.dataTable.renderRows();
+  }
+
+  increasePrecedence(index: number) {
+    const item = this.assetsArray.controls[index];
+    const itemValue = item.value as TeamSheetFormItem;
+
+    if (index === 0) {
       return;
     }
 
-    const cmpFn = SORTS[sort.active];
-    const isAsc = sort.direction === 'asc';
+    const above = this.assetsArray.controls[index - 1];
+    const aboveValue = above.value as TeamSheetFormItem;
 
-    switch (sort.active) {
-      case 'name':
-      case 'type':
-      case 'team':
-        this.assetsArray.controls.sort((ca, cb) =>
-          compare(cmpFn(ca.value), cmpFn(cb.value), isAsc)
-        );
-        break;
-      default:
-        this.assetsArray.controls.sort((ca, cb) =>
-          compareBoolean(
-            cmpFn(ca.value),
-            cmpFn(cb.value),
-            ca.value.asset.id,
-            cb.value.asset.id,
-            isAsc
-          )
-        );
+    if (
+      aboveValue.asset.type === itemValue.asset.type &&
+      aboveValue.substitute
+    ) {
+      this.assetsArray.controls[index - 1] = item;
+      this.assetsArray.controls[index] = above;
     }
 
     this.dataTable.renderRows();
+  }
+
+  decreasePrecedence(index: number) {
+    const item = this.assetsArray.controls[index];
+    const itemValue = item.value as TeamSheetFormItem;
+
+    if (index === this.assetsArray.controls.length - 1) {
+      return;
+    }
+
+    const below = this.assetsArray.controls[index + 1];
+    const belowValue = below.value as TeamSheetFormItem;
+
+    if (
+      belowValue.asset.type === itemValue.asset.type &&
+      belowValue.substitute
+    ) {
+      this.assetsArray.controls[index + 1] = item;
+      this.assetsArray.controls[index] = below;
+    }
+
+    this.dataTable.renderRows();
+  }
+
+  applySheet() {
+    this.week.setValue(this.teamSheet.weekId);
+
+    this.assetsArray.controls.forEach(ctrl => {
+      const ctrlValue = ctrl.value as TeamSheetFormItem;
+
+      const sheetAsset = this.teamSheet.items.find(
+        item => item.asset.id === ctrlValue.asset.id
+      );
+
+      if (sheetAsset) {
+        ctrl.patchValue({
+          playing: true,
+          substitute: sheetAsset.substitute
+        });
+      }
+    });
   }
 }

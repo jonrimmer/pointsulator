@@ -156,7 +156,7 @@
           "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "api:build",
-            "inspect": true
+            "inspect": false
           }
         },
         "lint": {

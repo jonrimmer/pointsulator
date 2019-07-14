@@ -24,3 +24,21 @@ mat-toolbar {
 .pt-errors {
   color: red;
 }
+
+tr {
+  &.Goalkeeper {
+    background-color: rgb(255, 254, 212);
+  }
+
+  &.Defence {
+    background-color: rgb(222, 255, 212);
+  }
+
+  &.Midfielder {
+    background-color: rgb(212, 255, 228);
+  }
+
+  &.Forward {
+    background-color: rgb(212, 243, 255);
+  }
+}

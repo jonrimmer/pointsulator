@@ -131,6 +131,10 @@
       mat-row
       *matRowDef="let row; columns: editColumns; when: isEditingRow"
     ></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      [class]="row.type"
+    ></tr>
   </table>
 </form>

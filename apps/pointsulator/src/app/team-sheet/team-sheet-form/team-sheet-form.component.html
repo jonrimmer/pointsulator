@@ -2,14 +2,12 @@
   <mat-form-field>
     <mat-label>Valid From Week</mat-label>
     <select matNativeControl formControlName="week">
-      <option *ngFor="let week of weeks" [ngValue]="week.num">
-        Week #{{ week.num }}, commencing Friday
-        {{ week.date | date: 'dd-MM-yyyy' }}
+      <option *ngFor="let week of weeks" [ngValue]="week.id">
+        Week #{{ week.id }}, commencing
+        {{ week.startDate | date: 'EEE dd-MM-yyyy' }}
       </option>
     </select>
   </mat-form-field>
-
-  <h3>Assets</h3>
 
   <div class="pt-errors" *ngIf="assetsArray.invalid">
     <p>Your selected team is not valid:</p>
@@ -30,32 +28,30 @@
   <table
     mat-table
     [dataSource]="assetsArray.controls"
-    matSort
-    (matSortChange)="onSort($event)"
     #dataTable
     class="pick-assets-table"
     formArrayName="assets"
   >
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <th mat-header-cell *matHeaderCellDef>Name</th>
       <td mat-cell *matCellDef="let ctrl">{{ ctrl.value.asset.name }}</td>
     </ng-container>
 
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+      <th mat-header-cell *matHeaderCellDef>Type</th>
       <td mat-cell *matCellDef="let ctrl">{{ ctrl.value.asset.type }}</td>
     </ng-container>
 
     <ng-container matColumnDef="team">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Team</th>
+      <th mat-header-cell *matHeaderCellDef>Team</th>
       <td mat-cell *matCellDef="let ctrl">
         {{ ctrl.value.asset.team }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="playing">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Playing</th>
-      <td mat-cell *matCellDef="let asset; let i = index">
+      <th mat-header-cell *matHeaderCellDef>Playing</th>
+      <td mat-cell *matCellDef="let ctrl; let i = index">
         <ng-container [formGroupName]="i">
           <mat-checkbox formControlName="playing"></mat-checkbox>
         </ng-container>
@@ -63,15 +59,33 @@
     </ng-container>
 
     <ng-container matColumnDef="substitute">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Substitute</th>
-      <td mat-cell *matCellDef="let asset; let i = index">
+      <th mat-header-cell *matHeaderCellDef>Substitute</th>
+      <td mat-cell *matCellDef="let ctrl; let i = index">
         <ng-container [formGroupName]="i">
           <mat-checkbox formControlName="substitute"></mat-checkbox>
         </ng-container>
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="precedence">
+      <th mat-header-cell *matHeaderCellDef>Precedence</th>
+      <td mat-cell *matCellDef="let ctrl; let i = index" class="precedence">
+        <ng-container *ngIf="ctrl.value.substitute">
+          <button mat-icon-button (click)="increasePrecedence(i)">
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+          <button mat-icon-button (click)="decreasePrecedence(i)">
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let ctrl; columns: displayedColumns"
+      [class]="ctrl.value.asset.type"
+    ></tr>
   </table>
 </form>

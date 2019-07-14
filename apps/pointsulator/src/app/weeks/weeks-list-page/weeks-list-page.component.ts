@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { WeekDetailsDTO } from '@pointsulator/api-interface';
+import { WeekDTO } from '@pointsulator/api-interface';
 import { WeeksApiService } from '../weeks-api.service';
 
 @Component({
@@ -9,7 +9,9 @@ import { WeeksApiService } from '../weeks-api.service';
   styleUrls: ['./weeks-list-page.component.scss']
 })
 export class WeeksListPageComponent implements OnInit {
-  public weeks$: Observable<WeekDetailsDTO[]>;
+  public weeks$: Observable<WeekDTO[]>;
+
+  public displayedColumns = ['id', 'startDate', 'status'];
 
   constructor(private readonly weeksApi: WeeksApiService) {}
 

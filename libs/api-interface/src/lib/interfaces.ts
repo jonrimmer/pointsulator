@@ -25,26 +25,16 @@ export interface ManagerDTO extends ManagerRef {
   teamName: string;
   squad?: AssetRef[];
 }
-
-export enum EventType {
-  Goal = 'Goal',
-  RedCard = 'RedCard'
-}
-
-export interface EventDTO {
-  assetId: number;
-  type: EventType;
-}
-
 export interface TeamSheetItemDTO {
   asset: AssetDTO;
   substitute: boolean;
+  precedence: number;
 }
 
 export interface TeamSheetDTO {
   manager: ManagerRef;
   items: TeamSheetItemDTO[];
-  validFrom: any;
+  weekId?: number;
 }
 
 export interface ScoreboardEntryDTO {
@@ -64,7 +54,6 @@ export interface AssetEventDTO {
   id?: number;
   type: AssetEventType;
   count: number;
-  owner: ManagerRef;
 }
 
 export enum WeekStatus {
@@ -92,6 +81,7 @@ export interface WeekDetailsDTO {
 
 export interface WeekAssetDTO {
   assetId: number;
+  owner: ManagerRef;
   didNotPlay: boolean;
   events: AssetEventDTO[];
 }
@@ -99,10 +89,11 @@ export interface WeekAssetDTO {
 export interface TeamSheetConfigItemDTO {
   assetId: number;
   substitute: boolean;
+  precedence: number;
 }
 
 export interface TeamSheetConfigDTO {
   managerId: number;
   items: TeamSheetConfigItemDTO[];
-  validFrom: any;
+  weekId: number;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TeamSheet } from './team-sheet.entity';
+import { TeamSheet, TeamSheetItem } from './team-sheet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeepPartial } from 'typeorm';
 import { TeamSheetDTO, TeamSheetConfigDTO } from '@pointsulator/api-interface';
@@ -10,10 +10,11 @@ function mapTeamSheetToDTO(ts: TeamSheet): TeamSheetDTO {
       id: ts.manager.id,
       name: ts.manager.name
     },
-    validFrom: ts.validFrom,
+    weekId: ts.week.id,
     items: ts.items.map(i => ({
       substitute: i.substitute,
-      asset: i.asset
+      asset: i.asset,
+      precedence: i.precedence
     }))
   };
 }
@@ -27,9 +28,12 @@ function mapEntityFromDTO(ts: TeamSheetConfigDTO): DeepPartial<TeamSheet> {
       substitute: item.substitute || false,
       asset: {
         id: item.assetId
-      }
+      },
+      precedence: item.precedence
     })),
-    validFrom: new Date(ts.validFrom)
+    week: {
+      id: ts.weekId
+    }
   };
 }
 
@@ -37,7 +41,9 @@ function mapEntityFromDTO(ts: TeamSheetConfigDTO): DeepPartial<TeamSheet> {
 export class TeamSheetsService {
   constructor(
     @InjectRepository(TeamSheet)
-    private readonly teamSheetRepo: Repository<TeamSheet>
+    private readonly teamSheetRepo: Repository<TeamSheet>,
+    @InjectRepository(TeamSheetItem)
+    private readonly itemRepo: Repository<TeamSheetItem>
   ) {}
 
   public async findByManagerId(id: number) {
@@ -45,13 +51,13 @@ export class TeamSheetsService {
       where: {
         manager: { id }
       },
-      relations: ['manager', 'items', 'items.asset']
+      relations: ['week', 'manager', 'items', 'items.asset']
     });
   }
 
   public async findById(id: number) {
     const result = await this.teamSheetRepo.findOne(id, {
-      relations: ['manager', 'items', 'items.asset']
+      relations: ['week', 'manager', 'items', 'items.asset']
     });
 
     return mapTeamSheetToDTO(result);
@@ -61,5 +67,14 @@ export class TeamSheetsService {
     const toSave = mapEntityFromDTO(teamSheet);
     const result = await this.teamSheetRepo.save(toSave);
     return this.findById(result.id);
+  }
+
+  public async clear() {
+    await this.itemRepo.delete({});
+    await this.itemRepo.query('alter table team_sheet_item AUTO_INCREMENT = 1');
+    await this.teamSheetRepo.delete({});
+    return this.teamSheetRepo.query(
+      'alter table team_sheet AUTO_INCREMENT = 1'
+    );
   }
 }

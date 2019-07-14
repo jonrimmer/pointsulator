@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { Asset } from '../assets/asset.entity';
 import { AssetEventType, WeekStatus } from '@pointsulator/api-interface';
+import { TeamSheet } from '../team-sheets/team-sheet.entity';
+import { Manager } from '../managers/manager.entity';
 
 @Entity()
 export class Week {
@@ -26,8 +28,35 @@ export class Week {
   @Column({ type: 'enum', default: WeekStatus.Future, enum: WeekStatus })
   status: WeekStatus;
 
-  @OneToMany(() => WeekEvent, event => event.week)
+  @OneToMany(() => WeekAsset, event => event.week)
+  assets: WeekAsset[];
+
+  @OneToMany(() => TeamSheet, teamSheet => teamSheet.week)
+  teamSheets: TeamSheet[];
+}
+
+@Entity()
+export class WeekAsset {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Week, week => week.assets)
+  @JoinColumn()
+  week: Week;
+
+  @ManyToOne(() => Asset)
+  @JoinColumn()
+  asset: Asset;
+
+  @Column()
+  didNotPlay: boolean;
+
+  @OneToMany(() => WeekEvent, event => event.asset)
   events: WeekEvent[];
+
+  @ManyToOne(() => Manager)
+  @JoinColumn()
+  owner: Manager;
 }
 
 @Entity()
@@ -35,12 +64,9 @@ export class WeekEvent {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Week, week => week.events)
-  week: Week;
-
-  @ManyToOne(() => Asset)
+  @ManyToOne(() => WeekAsset, asset => asset.events)
   @JoinColumn()
-  asset: Asset;
+  asset: WeekAsset;
 
   @Column({ type: 'enum', default: AssetEventType.Goal, enum: AssetEventType })
   type: AssetEventType;

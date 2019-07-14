@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Asset } from './asset.entity';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { AssetDTO } from '@pointsulator/api-interface';
 
 function mapAsset(a: Asset): AssetDTO {
@@ -38,11 +38,16 @@ export class AssetsService {
     return mapAsset(await this.assetRepository.findOne(id));
   }
 
-  async save(asset: AssetDTO | Asset) {
+  async save(asset: DeepPartial<AssetDTO> | DeepPartial<Asset>) {
     return mapAsset(await this.assetRepository.save(asset));
   }
 
-  async saveMany(assets: Asset[]) {
+  async saveMany(assets: DeepPartial<Asset>[]) {
     return (await this.assetRepository.save(assets)).map(mapAsset);
+  }
+
+  async clear() {
+    await this.assetRepository.delete({});
+    return this.assetRepository.query('alter table asset AUTO_INCREMENT = 1');
   }
 }

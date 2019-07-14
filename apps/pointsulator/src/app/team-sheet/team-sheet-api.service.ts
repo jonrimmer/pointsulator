@@ -18,6 +18,10 @@ export class TeamSheetApiService {
     });
   }
 
+  getById(id: number): Observable<TeamSheetDTO> {
+    return this.http.get<TeamSheetDTO>(`${TEAM_SHEETS_ENDPOINT}/${id}`);
+  }
+
   create(teamSheet: TeamSheetConfigDTO): Observable<TeamSheetDTO> {
     return this.http.post<TeamSheetDTO>(TEAM_SHEETS_ENDPOINT, teamSheet);
   }

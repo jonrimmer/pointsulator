@@ -1,0 +1,13 @@
+tr {
+  cursor: pointer;
+}
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.weeks-table {
+  width: 100%;
+  table-layout: fixed;
+}

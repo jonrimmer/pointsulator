@@ -9,14 +9,52 @@ import * as path from 'path';
 import { Asset } from '../assets/asset.entity';
 import { ManagersService } from '../managers/managers.service';
 import { DeepPartial } from 'typeorm';
-import { AssetDTO, AssetType } from '@pointsulator/api-interface';
+import {
+  AssetDTO,
+  AssetType,
+  ManagerDTO,
+  TeamSheetConfigDTO,
+  TeamSheetConfigItemDTO
+} from '@pointsulator/api-interface';
 import { TeamSheetsService } from '../team-sheets/team-sheets.service';
 import * as faker from 'faker';
 import Faker from 'faker';
 import { arrayOf } from '../utils/fake';
 import { Manager } from '../managers/manager.entity';
+import { DateTime } from 'luxon';
 
-console.log(faker.seed);
+function items(
+  assets: AssetDTO[],
+  type: AssetType,
+  count: number
+): TeamSheetConfigItemDTO[] {
+  return assets
+    .filter(a => a.type === type)
+    .slice(0, count)
+    .map(a => ({
+      assetId: a.id,
+      substitute: false,
+      precedence: null
+    }));
+}
+
+function fakeTeamsheet(
+  assets: AssetDTO[],
+  manager: ManagerDTO
+): TeamSheetConfigDTO {
+  const managersAssets = assets.filter(a => a.owner.id === manager.id);
+
+  return {
+    validFrom: null,
+    managerId: manager.id,
+    items: [
+      ...items(managersAssets, AssetType.Goalkeeper, 1),
+      ...items(managersAssets, AssetType.Defence, 1),
+      ...items(managersAssets, AssetType.Midfielder, 3),
+      ...items(managersAssets, AssetType.Forward, 3)
+    ]
+  };
+}
 
 @Injectable()
 export class StartupService implements OnApplicationBootstrap {
@@ -33,8 +71,6 @@ export class StartupService implements OnApplicationBootstrap {
       await this.assetsService.clear();
       await this.managersService.clear();
       await this.weeksService.clear();
-
-      await this.weeksService.createWeeks(new Date().getFullYear());
 
       Faker.seed(1);
       Faker.setLocale('en');
@@ -78,7 +114,40 @@ export class StartupService implements OnApplicationBootstrap {
         );
       });
 
-      this.assetsService.saveMany(assets);
+      const savedAssets = await this.assetsService.saveMany(assets);
+
+      // Create some teamsheets
+
+      const manager = managers[0];
+
+      await this.teamSheetsService.addTeamSheet({
+        managerId: manager.id,
+        items: [],
+        validFrom: DateTime.fromObject({
+          day: 1,
+          month: 1,
+          year: 2019
+        }).toJSDate()
+      });
+
+      await this.teamSheetsService.addTeamSheet({
+        managerId: manager.id,
+        items: [],
+        validFrom: DateTime.fromObject({
+          day: 1,
+          month: 2,
+          year: 2019
+        }).toJSDate()
+      });
+
+      await this.teamSheetsService.addTeamSheet({
+        ...fakeTeamsheet(savedAssets, manager),
+        validFrom: DateTime.fromObject({
+          day: 1,
+          month: 3,
+          year: 2019
+        }).toJSDate()
+      });
 
       // const rows: DeepPartial<Asset>[] = [];
 

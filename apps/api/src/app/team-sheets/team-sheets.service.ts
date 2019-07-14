@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { TeamSheet, TeamSheetItem } from './team-sheet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm';
-import { TeamSheetDTO, TeamSheetConfigDTO } from '@pointsulator/api-interface';
+import { Repository, DeepPartial, MoreThan } from 'typeorm';
+import {
+  TeamSheetDTO,
+  TeamSheetConfigDTO,
+  WeekDTO
+} from '@pointsulator/api-interface';
 
 function mapTeamSheetToDTO(ts: TeamSheet): TeamSheetDTO {
   return {
@@ -10,7 +14,7 @@ function mapTeamSheetToDTO(ts: TeamSheet): TeamSheetDTO {
       id: ts.manager.id,
       name: ts.manager.name
     },
-    weekId: ts.week.id,
+    validFrom: ts.validFrom,
     items: ts.items.map(i => ({
       substitute: i.substitute,
       asset: i.asset,
@@ -31,9 +35,7 @@ function mapEntityFromDTO(ts: TeamSheetConfigDTO): DeepPartial<TeamSheet> {
       },
       precedence: item.precedence
     })),
-    week: {
-      id: ts.weekId
-    }
+    validFrom: ts.validFrom
   };
 }
 
@@ -51,13 +53,13 @@ export class TeamSheetsService {
       where: {
         manager: { id }
       },
-      relations: ['week', 'manager', 'items', 'items.asset']
+      relations: ['manager', 'items', 'items.asset']
     });
   }
 
   public async findById(id: number) {
     const result = await this.teamSheetRepo.findOne(id, {
-      relations: ['week', 'manager', 'items', 'items.asset']
+      relations: ['manager', 'items', 'items.asset']
     });
 
     return mapTeamSheetToDTO(result);
@@ -76,5 +78,20 @@ export class TeamSheetsService {
     return this.teamSheetRepo.query(
       'alter table team_sheet AUTO_INCREMENT = 1'
     );
+  }
+
+  async findForDate(startDate: Date): Promise<TeamSheetDTO[]> {
+    const result = await this.teamSheetRepo
+      .createQueryBuilder('ts')
+      .leftJoinAndSelect('ts.manager', 'm')
+      .leftJoinAndSelect('ts.items', 'i')
+      .leftJoinAndSelect('i.asset', 'a')
+      .where(
+        'ts.id in (select max(id) from team_sheet where validFrom <= :date group by managerId)',
+        { date: startDate }
+      )
+      .getMany();
+
+    return result.map(mapTeamSheetToDTO);
   }
 }

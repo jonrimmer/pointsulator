@@ -34,7 +34,7 @@ export interface TeamSheetItemDTO {
 export interface TeamSheetDTO {
   manager: ManagerRef;
   items: TeamSheetItemDTO[];
-  weekId?: number;
+  validFrom?: Date;
 }
 
 export interface ScoreboardEntryDTO {
@@ -95,5 +95,9 @@ export interface TeamSheetConfigItemDTO {
 export interface TeamSheetConfigDTO {
   managerId: number;
   items: TeamSheetConfigItemDTO[];
-  weekId: number;
+  validFrom: Date;
+}
+
+export interface NewWeekDTO {
+  date: number;
 }

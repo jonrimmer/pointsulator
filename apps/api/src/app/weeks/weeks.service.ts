@@ -7,16 +7,17 @@ import {
   WeekDTO,
   WeekStatus,
   WeekDetailsDTO,
-  WeekAssetDTO
+  NewWeekDTO
 } from '@pointsulator/api-interface';
-import { Asset } from '../assets/asset.entity';
+import { TeamSheetsService } from '../team-sheets/team-sheets.service';
 
 @Injectable()
 export class WeeksService {
   constructor(
     @InjectRepository(Week) private readonly weeksRepo: Repository<Week>,
     @InjectRepository(WeekEvent)
-    private readonly eventsRepo: Repository<WeekEvent>
+    private readonly eventsRepo: Repository<WeekEvent>,
+    private readonly tsService: TeamSheetsService
   ) {}
 
   async getWeeks(): Promise<WeekDTO[]> {
@@ -29,26 +30,15 @@ export class WeeksService {
 
   async getWeek(id: number): Promise<WeekDetailsDTO> {
     const week = await this.weeksRepo.findOne(id, {
-      relations: [
-        'assets',
-        'assets.asset',
-        'assets.event',
-        'assets.owner',
-        'teamSheets',
-        'teamSheets.manager'
-      ]
+      relations: ['assets', 'assets.asset', 'assets.events', 'assets.owner']
     });
+
+    const teamSheets = await this.tsService.findForDate(week.startDate);
 
     return {
       id: week.id,
       startDate: week.startDate,
-      teams: week.teamSheets.map(ts => ({
-        manager: {
-          id: ts.manager.id,
-          name: ts.manager.name
-        },
-        items: ts.items
-      })),
+      teams: teamSheets,
       scoreboard: {
         before: [],
         after: []
@@ -65,17 +55,23 @@ export class WeeksService {
     };
   }
 
-  createWeeks(year: number) {
-    // 30 weeks should be enough for anyone.
+  createWeek(dto: NewWeekDTO) {
+    const date = DateTime.fromMillis(dto.date);
 
-    const startDate = DateTime.local(year, 7, 27);
+    const status =
+      date.diffNow().milliseconds > 0
+        ? WeekStatus.Future
+        : WeekStatus.InProgress;
 
-    const weeks = Array.from(
-      { length: 30 },
-      (_, i) => new Week(startDate.plus({ weeks: i }).toJSDate())
+    return this.weeksRepo.save(
+      {
+        startDate: new Date(dto.date),
+        status
+      },
+      {
+        reload: true
+      }
     );
-
-    this.weeksRepo.save(weeks);
   }
 
   async clear() {

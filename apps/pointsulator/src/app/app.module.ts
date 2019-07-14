@@ -19,7 +19,9 @@ import {
   MatSortModule,
   MatInputModule,
   MatFormFieldModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatDatepickerModule,
+  MatNativeDateModule
 } from '@angular/material';
 import { AssetsPageComponent } from './assets/assets-page/assets-page.component';
 import { AssetsEffects } from './assets/assets.effects';
@@ -36,6 +38,8 @@ import { TeamSheetListPageComponent } from './team-sheet/team-sheet-list-page/te
 import { CreateTeamSheetPageComponent } from './team-sheet/create-team-sheet-page/create-team-sheet-page.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { TeamSheetFormComponent } from './team-sheet/team-sheet-form/team-sheet-form.component';
+import { CreateWeekPageComponent } from './weeks/create-week-page/create-week-page.component';
+import { WeekFormComponent } from './weeks/week-form/week-form.component';
 
 export const ROUTES: Route[] = [
   {
@@ -63,7 +67,11 @@ export const ROUTES: Route[] = [
     component: WeeksListPageComponent
   },
   {
-    path: 'weeks/:id',
+    path: 'weeks/add',
+    component: CreateWeekPageComponent
+  },
+  {
+    path: 'weeks/:weekId',
     component: WeekPageComponent
   },
   {
@@ -84,7 +92,9 @@ export const ROUTES: Route[] = [
     TeamSheetListPageComponent,
     CreateTeamSheetPageComponent,
     PageHeaderComponent,
-    TeamSheetFormComponent
+    TeamSheetFormComponent,
+    CreateWeekPageComponent,
+    WeekFormComponent
   ],
   imports: [
     BrowserModule,
@@ -104,6 +114,8 @@ export const ROUTES: Route[] = [
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     FormsModule,
     ReactiveFormsModule,
     StoreDevtoolsModule.instrument({

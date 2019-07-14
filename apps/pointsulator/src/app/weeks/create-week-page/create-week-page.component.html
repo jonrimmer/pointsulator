@@ -1,0 +1,23 @@
+<pt-page-header>
+  <h2 class="mat-h2">Create New Week</h2>
+</pt-page-header>
+
+<form class="control-container" [formGroup]="form">
+  <mat-form-field class="valid-from">
+    <mat-label>Commencing</mat-label>
+    <input
+      matInput
+      [matDatepickerFilter]="onlyFridays"
+      [matDatepicker]="picker"
+      formControlName="commencing"
+      placeholder="Choose a date"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <div class="actions">
+    <button mat-raised-button class="save" (click)="save()" color="accent">
+      Save
+    </button>
+  </div>
+</form>

@@ -9,16 +9,14 @@ import {
 } from 'typeorm';
 import { Manager } from '../managers/manager.entity';
 import { Asset } from '../assets/asset.entity';
-import { Week } from '../weeks/week.entity';
 
 @Entity()
 export class TeamSheet {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Week)
-  @JoinColumn()
-  week: Week;
+  @Column()
+  validFrom: Date;
 
   @OneToMany(() => TeamSheetItem, item => item.teamSheet, {
     cascade: true
@@ -26,6 +24,7 @@ export class TeamSheet {
   items: TeamSheetItem[];
 
   @ManyToOne(() => Manager, manager => manager.teamSheets)
+  @JoinColumn()
   manager: Manager;
 }
 
@@ -45,9 +44,10 @@ export class TeamSheetItem {
   precedence: number;
 
   @ManyToOne(() => TeamSheet, teamSheet => teamSheet.items)
+  @JoinColumn()
   teamSheet: TeamSheet;
 
-  @OneToOne(() => Asset)
+  @ManyToOne(() => Asset)
   @JoinColumn()
   asset: Asset;
 }

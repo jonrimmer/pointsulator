@@ -1,12 +1,15 @@
 <form [formGroup]="form" class="control-container">
-  <mat-form-field>
-    <mat-label>Valid From Week</mat-label>
-    <select matNativeControl formControlName="week">
-      <option *ngFor="let week of weeks" [ngValue]="week.id">
-        Week #{{ week.id }}, commencing
-        {{ week.startDate | date: 'EEE dd-MM-yyyy' }}
-      </option>
-    </select>
+  <mat-form-field class="valid-from">
+    <mat-label>Valid From</mat-label>
+    <input
+      matInput
+      [matDatepickerFilter]="onlyFridays"
+      [matDatepicker]="picker"
+      formControlName="validFrom"
+      placeholder="Choose a date"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
 
   <div class="pt-errors" *ngIf="assetsArray.invalid">

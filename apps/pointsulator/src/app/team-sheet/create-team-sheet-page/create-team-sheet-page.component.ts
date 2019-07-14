@@ -82,7 +82,7 @@ export class CreateTeamSheetPageComponent implements OnInit, OnDestroy {
 
             return result;
           }),
-        weekId: form.week.value
+        validFrom: form.validFrom.value
       };
 
       this.teamSheetApi.create(config).subscribe(() => {

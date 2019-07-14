@@ -29,4 +29,8 @@ export class WeekPageComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subs.unsubscribe();
   }
+
+  save() {}
+
+  delete() {}
 }

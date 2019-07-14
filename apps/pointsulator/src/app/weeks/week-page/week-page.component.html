@@ -1,0 +1,12 @@
+<pt-page-header>
+  <h2 class="mat-h2">Week</h2>
+  <div class="actions">
+    <button mat-raised-button class="save" (click)="save()" color="accent">
+      Save
+    </button>
+
+    <button mat-raised-button class="delete" (click)="delete()">Delete</button>
+  </div>
+</pt-page-header>
+
+<pt-week-form [week]="week$ | async"></pt-week-form>

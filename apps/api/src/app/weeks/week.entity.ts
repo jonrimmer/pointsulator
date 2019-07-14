@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Asset } from '../assets/asset.entity';
 import { AssetEventType, WeekStatus } from '@pointsulator/api-interface';
-import { TeamSheet } from '../team-sheets/team-sheet.entity';
 import { Manager } from '../managers/manager.entity';
 
 @Entity()
@@ -30,9 +29,6 @@ export class Week {
 
   @OneToMany(() => WeekAsset, event => event.week)
   assets: WeekAsset[];
-
-  @OneToMany(() => TeamSheet, teamSheet => teamSheet.week)
-  teamSheets: TeamSheet[];
 }
 
 @Entity()

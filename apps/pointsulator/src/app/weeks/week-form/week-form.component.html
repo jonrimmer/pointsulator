@@ -1,0 +1,15 @@
+<form [formGroup]="form">
+  <div formArrayName="teams">
+    <div
+      *ngFor="let team of week?.teams; let i = index"
+      class="team"
+      [formControlName]="i"
+    >
+      <h3>{{ team.manager.name }}</h3>
+
+      <div *ngIf="teams.controls[i] as teamCtrl">
+        <div *ngFor="let teamCtrl."
+      </div>
+    </div>
+  </div>
+</form>

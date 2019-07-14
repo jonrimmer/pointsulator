@@ -13,8 +13,8 @@ import {
   ValidatorFn,
   ValidationErrors
 } from '@angular/forms';
-import { MatTable, MatSort, Sort, fadeInItems } from '@angular/material';
-import { runInThisContext } from 'vm';
+import { MatTable } from '@angular/material';
+import { onlyFridays } from '../../utils/dates';
 
 const isSingular = (asset: AssetDTO) =>
   asset.type === AssetType.Defence || asset.type === AssetType.Goalkeeper;
@@ -93,27 +93,6 @@ export const legalTeamValidator: ValidatorFn = (
   styleUrls: ['./team-sheet-form.component.scss']
 })
 export class TeamSheetFormComponent implements OnInit, OnChanges {
-  public week = new FormControl(null, [Validators.required]);
-  public assetsArray = new FormArray([], { validators: legalTeamValidator });
-  public displayedColumns = [
-    'precedence',
-    'name',
-    'type',
-    'team',
-    'playing',
-    'substitute'
-  ];
-
-  public form = new FormGroup({
-    week: this.week,
-    assets: this.assetsArray
-  });
-
-  @ViewChild('dataTable', { static: true })
-  dataTable: MatTable<any>;
-
-  assets: AssetDTO[];
-
   @Input('assets')
   public set assetsInput(assets: AssetDTO[]) {
     this.assets = assets;
@@ -169,11 +148,35 @@ export class TeamSheetFormComponent implements OnInit, OnChanges {
     }
   }
 
+  constructor() {}
+  public validFrom = new FormControl(null, [Validators.required]);
+  public assetsArray = new FormArray([], { validators: legalTeamValidator });
+  public displayedColumns = [
+    'precedence',
+    'name',
+    'type',
+    'team',
+    'playing',
+    'substitute'
+  ];
+
+  public form = new FormGroup({
+    validFrom: this.validFrom,
+    assets: this.assetsArray
+  });
+
+  @ViewChild('dataTable', { static: true })
+  dataTable: MatTable<any>;
+
+  assets: AssetDTO[];
+
   @Input()
   public weeks: WeekDTO[];
 
   @Input()
   public teamSheet: TeamSheetDTO;
+
+  onlyFridays = onlyFridays;
 
   assetsOfTypePlaying(type: AssetType) {
     return this.assetsOfType(type).filter(
@@ -186,8 +189,6 @@ export class TeamSheetFormComponent implements OnInit, OnChanges {
       ({ value }) => value.asset.type === type
     );
   }
-
-  constructor() {}
 
   ngOnInit() {}
 
@@ -275,7 +276,7 @@ export class TeamSheetFormComponent implements OnInit, OnChanges {
   }
 
   applySheet() {
-    this.week.setValue(this.teamSheet.weekId);
+    this.validFrom.setValue(this.teamSheet.validFrom);
 
     this.assetsArray.controls.forEach(ctrl => {
       const ctrlValue = ctrl.value as TeamSheetFormItem;

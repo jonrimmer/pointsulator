@@ -1,3 +1,13 @@
+<a
+  type="button"
+  mat-fab
+  color="accent"
+  class="add-week"
+  [routerLink]="['.', 'add']"
+>
+  <mat-icon>add</mat-icon>
+</a>
+
 <table mat-table [dataSource]="weeks$" matSort class="weeks-table">
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id">

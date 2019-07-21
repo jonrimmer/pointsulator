@@ -1,0 +1,17 @@
+.asset-name {
+  color: grey;
+
+  &.active {
+    color: black;
+  }
+}
+
+td {
+  padding: 6px;
+}
+
+input[type='number'] {
+  font-size: inherit;
+  width: 50px;
+  text-align: right;
+}

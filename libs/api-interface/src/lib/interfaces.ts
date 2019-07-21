@@ -68,22 +68,27 @@ export interface WeekDTO {
   status: WeekStatus;
 }
 
+export interface WeekAssetDTO {
+  id: number;
+  asset: AssetDTO;
+  substitute: boolean;
+  precedence: number;
+  didNotPlay: boolean;
+  events: AssetEventDTO[];
+}
+
+export interface WeekTeamSheetDTO extends Record<AssetType, WeekAssetDTO[]> {
+  manager: ManagerRef;
+}
+
 export interface WeekDetailsDTO {
   id: number;
   startDate: Date;
-  teams: TeamSheetDTO[];
+  teams: WeekTeamSheetDTO[];
   scoreboard: {
     before: ScoreboardEntryDTO[];
     after?: ScoreboardEntryDTO[];
   };
-  assets: WeekAssetDTO[];
-}
-
-export interface WeekAssetDTO {
-  assetId: number;
-  owner: ManagerRef;
-  didNotPlay: boolean;
-  events: AssetEventDTO[];
 }
 
 export interface TeamSheetConfigItemDTO {

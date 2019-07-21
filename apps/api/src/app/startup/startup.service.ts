@@ -26,15 +26,16 @@ import { DateTime } from 'luxon';
 function items(
   assets: AssetDTO[],
   type: AssetType,
-  count: number
+  count: number,
+  subCount: number
 ): TeamSheetConfigItemDTO[] {
   return assets
     .filter(a => a.type === type)
-    .slice(0, count)
-    .map(a => ({
+    .slice(0, count + subCount)
+    .map((a, i) => ({
       assetId: a.id,
-      substitute: false,
-      precedence: null
+      substitute: i < count,
+      precedence: i >= count ? i : null
     }));
 }
 
@@ -48,10 +49,10 @@ function fakeTeamsheet(
     validFrom: null,
     managerId: manager.id,
     items: [
-      ...items(managersAssets, AssetType.Goalkeeper, 1),
-      ...items(managersAssets, AssetType.Defence, 1),
-      ...items(managersAssets, AssetType.Midfielder, 3),
-      ...items(managersAssets, AssetType.Forward, 3)
+      ...items(managersAssets, AssetType.Goalkeeper, 1, 1),
+      ...items(managersAssets, AssetType.Defence, 1, 1),
+      ...items(managersAssets, AssetType.Midfielder, 3, 2),
+      ...items(managersAssets, AssetType.Forward, 3, 2)
     ]
   };
 }
@@ -147,6 +148,10 @@ export class StartupService implements OnApplicationBootstrap {
           month: 3,
           year: 2019
         }).toJSDate()
+      });
+
+      await this.weeksService.createWeek({
+        date: Date.now()
       });
 
       // const rows: DeepPartial<Asset>[] = [];

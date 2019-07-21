@@ -1,0 +1,54 @@
+<h2>{{ team.manager.name }} {{ form.value.totalPoints }}</h2>
+
+<table [formGroup]="form">
+  <thead>
+    <th>Asset</th>
+    <th>DNP</th>
+    <th>G</th>
+    <th>A</th>
+    <th>C</th>
+    <th>RC</th>
+    <th>P</th>
+  </thead>
+  <tbody>
+    <tr class="area">
+      <td colspan="7">
+        Keeper
+      </td>
+    </tr>
+
+    <ng-container *ngFor="let ctrl of keepers.controls">
+      <tr pt-item-points [form]="ctrl"></tr>
+    </ng-container>
+
+    <tr class="area">
+      <td colspan="7">
+        Defence
+      </td>
+    </tr>
+
+    <ng-container *ngFor="let ctrl of defence.controls">
+      <tr pt-item-points [form]="ctrl"></tr>
+    </ng-container>
+
+    <tr class="area">
+      <td colspan="7">
+        Midfield
+      </td>
+    </tr>
+
+    <ng-container *ngFor="let ctrl of midfield.controls">
+      <tr pt-item-points [form]="ctrl"></tr>
+    </ng-container>
+
+    <tr class="area">
+      <td colspan="7">
+        Attack
+      </td>
+    </tr>
+
+    <ng-container *ngFor="let ctrl of forwards.controls">
+      <tr pt-item-points [form]="ctrl"></tr>
+    </ng-container>
+  </tbody>
+</table>

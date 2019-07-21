@@ -7,9 +7,15 @@ import {
   WeekDTO,
   WeekStatus,
   WeekDetailsDTO,
-  NewWeekDTO
+  NewWeekDTO,
+  WeekTeamSheetDTO,
+  TeamSheetDTO,
+  TeamSheetItemDTO,
+  AssetType,
+  WeekAssetDTO
 } from '@pointsulator/api-interface';
 import { TeamSheetsService } from '../team-sheets/team-sheets.service';
+import { groupBy, flow, map, sortBy } from 'lodash/fp';
 
 @Injectable()
 export class WeeksService {
@@ -35,23 +41,36 @@ export class WeeksService {
 
     const teamSheets = await this.tsService.findForDate(week.startDate);
 
+    const teams: WeekTeamSheetDTO[] = teamSheets.map(team => ({
+      manager: team.manager,
+      ...(flow(
+        map((item: TeamSheetItemDTO) => {
+          const weekAsset = week.assets.find(a => a.id === item.asset.id) || {
+            id: null,
+            didNotPlay: false,
+            events: []
+          };
+
+          return {
+            ...item,
+            id: weekAsset.id,
+            didNotPlay: weekAsset.didNotPlay,
+            events: weekAsset.events
+          };
+        }),
+        sortBy(item => item.substitute),
+        groupBy(item => item.asset.type)
+      )(team.items) as Record<AssetType, WeekAssetDTO[]>)
+    }));
+
     return {
       id: week.id,
       startDate: week.startDate,
-      teams: teamSheets,
+      teams,
       scoreboard: {
         before: [],
         after: []
-      },
-      assets: week.assets.map(wa => ({
-        assetId: wa.asset.id,
-        didNotPlay: wa.didNotPlay,
-        owner: {
-          id: wa.owner.id,
-          name: wa.owner.name
-        },
-        events: wa.events
-      }))
+      }
     };
   }
 

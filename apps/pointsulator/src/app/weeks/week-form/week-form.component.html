@@ -1,15 +1,24 @@
-<form [formGroup]="form">
-  <div formArrayName="teams">
-    <div
-      *ngFor="let team of week?.teams; let i = index"
-      class="team"
-      [formControlName]="i"
-    >
-      <h3>{{ team.manager.name }}</h3>
+<table>
+  <thead>
+    <th>Team</th>
+    <th>Points</th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ctrl of teams.controls; let i = index">
+      <td>
+        {{ (week?.teams)[i].manager.name }}
+      </td>
+      <td>
+        {{ ctrl.value.totalPoints }}
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-      <div *ngIf="teams.controls[i] as teamCtrl">
-        <div *ngFor="let teamCtrl."
-      </div>
+<form [formGroup]="form">
+  <ng-container formArrayName="teams">
+    <div *ngFor="let team of week?.teams; let i = index" class="team">
+      <pt-team-points [formControlName]="i" [team]="team"></pt-team-points>
     </div>
-  </div>
+  </ng-container>
 </form>

@@ -40,6 +40,8 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
 import { TeamSheetFormComponent } from './team-sheet/team-sheet-form/team-sheet-form.component';
 import { CreateWeekPageComponent } from './weeks/create-week-page/create-week-page.component';
 import { WeekFormComponent } from './weeks/week-form/week-form.component';
+import { TeamPointsComponent } from './weeks/team-points/team-points.component';
+import { ItemPointsComponent } from './weeks/item-points/item-points.component';
 
 export const ROUTES: Route[] = [
   {
@@ -94,7 +96,9 @@ export const ROUTES: Route[] = [
     PageHeaderComponent,
     TeamSheetFormComponent,
     CreateWeekPageComponent,
-    WeekFormComponent
+    WeekFormComponent,
+    TeamPointsComponent,
+    ItemPointsComponent
   ],
   imports: [
     BrowserModule,

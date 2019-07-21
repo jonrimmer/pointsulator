@@ -5,6 +5,8 @@ import {
   AssetType
 } from '@pointsulator/api-interface';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
+import { countBy } from 'ramda';
+import { ItemPoints } from '../item-points/item-points.component';
 
 const itemGroup = (item: TeamSheetItemDTO) =>
   new FormGroup({
@@ -31,42 +33,12 @@ export class WeekFormComponent implements OnInit {
   public set weekInput(value: WeekDetailsDTO) {
     this.week = value;
 
-    this.teams.clear();
-
-    value.teams.forEach(team => {
-      const keeper = new FormArray([]);
-      const defence = new FormArray([]);
-      const midfield = new FormArray([]);
-      const forwards = new FormArray([]);
-
-      const group = new FormGroup({
-        keeper,
-        defence,
-        midfield,
-        forwards
-      });
-
-      team.items.forEach(item => {
-        const ctrl = itemGroup(item);
-
-        switch (item.asset.type) {
-          case AssetType.Goalkeeper:
-            keeper.controls.push(ctrl);
-            return;
-          case AssetType.Defence:
-            defence.controls.push(ctrl);
-            return;
-          case AssetType.Midfielder:
-            midfield.controls.push(ctrl);
-            return;
-          case AssetType.Forward:
-            forwards.controls.push(ctrl);
-            return;
-        }
-      });
-
-      this.teams.push(group);
-    });
+    if (value) {
+      this.teams.clear();
+      this.teams.controls.push(
+        ...value.teams.map(team => new FormControl(team))
+      );
+    }
   }
 
   constructor() {

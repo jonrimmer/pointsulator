@@ -1,0 +1,35 @@
+<ng-container [formGroup]="form">
+  <td class="asset-name" [class.active]="isActive">
+    {{ asset?.name }} <span class="sub" *ngIf="isSub">(sub)</span>
+  </td>
+
+  <td>
+    <input type="checkbox" formControlName="didNotPlay" name="didNotPlay" />
+  </td>
+
+  <ng-container formGroupName="events">
+    <td>
+      <input type="number" name="goals" formControlName="goals" min="0" />
+    </td>
+
+    <td>
+      <input type="number" name="assists" formControlName="assists" min="0" />
+    </td>
+
+    <td>
+      <input
+        type="number"
+        name="conceded"
+        min="0"
+        formControlName="conceded"
+        *ngIf="asset.type === 'Goalkeeper' || asset.type === 'Defence'"
+      />
+    </td>
+
+    <td>
+      <input type="checkbox" formControlName="redCard" name="didNotPlay" />
+    </td>
+
+    <td>{{ points > 0 ? '+' : '' }}{{ points }}</td>
+  </ng-container>
+</ng-container>

@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/theming';
+@import './varables';
 
 html,
 body {
@@ -27,18 +28,18 @@ mat-toolbar {
 
 tr {
   &.Goalkeeper {
-    background-color: rgb(255, 254, 212);
+    background-color: $keeperColor;
   }
 
   &.Defence {
-    background-color: rgb(222, 255, 212);
+    background-color: $defenceColor;
   }
 
   &.Midfielder {
-    background-color: rgb(212, 255, 228);
+    background-color: $midfieldColor;
   }
 
   &.Forward {
-    background-color: rgb(212, 243, 255);
+    background-color: $forwardColor;
   }
 }

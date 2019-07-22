@@ -1,20 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
   FormControl,
   FormArray,
-  FormGroup,
-  FormGroupName
+  FormGroup
 } from '@angular/forms';
 import {
   AssetType,
   TeamSheetItemDTO,
-  WeekTeamSheetDTO,
-  AssetEventType
+  WeekTeamSheetDTO
 } from '@pointsulator/api-interface';
-import { subscribeOn, observeOn } from 'rxjs/operators';
+import { observeOn } from 'rxjs/operators';
 import { asyncScheduler } from 'rxjs';
+import { mapValues } from 'lodash';
 
 interface AssetEvents {
   goals: number;
@@ -51,31 +50,51 @@ export class TeamPointsComponent implements OnInit, ControlValueAccessor {
   });
 
   totalPoints = new FormControl(0);
+  managerCtrl = new FormControl();
+  startingPointsCtrl = new FormControl();
 
   form = new FormGroup({
     assets: this.assets,
-    totalPoints: this.totalPoints
+    points: this.totalPoints
   });
 
   AssetType = AssetType;
 
   byType: Record<AssetType, TeamSheetItemDTO[]>;
 
-  @Input()
   team: WeekTeamSheetDTO;
 
-  onChange = (val: any) => {};
+  onChange = (value: any) => {};
   onTouched = () => {};
 
   ngOnInit() {
-    this.totalPoints.valueChanges.subscribe(() => {
-      if (this.onChange) {
-        this.onChange(this.form.value);
-      }
-    });
+    this.totalPoints.valueChanges
+      .pipe(observeOn(asyncScheduler, 10))
+      .subscribe(() => {
+        if (this.onChange) {
+          const { points, assets } = this.form.value;
+          this.onChange({
+            ...this.team,
+            points,
+            ...mapValues(assets, (items: any[]) =>
+              items.map(item => ({
+                id: item.asset.id,
+                asset: item.asset,
+                didNotPlay: item.didNotPlay,
+                goals: item.events.goals,
+                assists: item.events.assists,
+                conceded: item.events.conceded,
+                redCard: item.events.redCard
+              }))
+            )
+          });
+        }
+      });
   }
 
   writeValue(obj: WeekTeamSheetDTO): void {
+    this.team = obj;
+
     if (obj) {
       this.keepers.clear();
       this.defence.clear();
@@ -87,17 +106,16 @@ export class TeamPointsComponent implements OnInit, ControlValueAccessor {
 
         obj[type].forEach(item => {
           const ctrl = new FormGroup({
+            id: new FormControl(item.id),
             asset: new FormControl(item.asset),
-            sub: new FormControl(item.substitute),
+            substitute: new FormControl(item.substitute),
             didNotPlay: new FormControl(item.didNotPlay),
             active: new FormControl(!item.substitute),
             events: new FormGroup({
-              goals: new FormControl(
-                item.events.filter(e => e.type === AssetEventType.Goal).length
-              ),
-              assists: new FormControl(0),
-              conceded: new FormControl(0),
-              redCard: new FormControl(false)
+              goals: new FormControl(item.goals),
+              assists: new FormControl(item.assists),
+              conceded: new FormControl(item.conceded),
+              redCard: new FormControl(item.redCard)
             }),
             points: new FormControl(0)
           });
@@ -123,11 +141,12 @@ export class TeamPointsComponent implements OnInit, ControlValueAccessor {
             });
 
           this.calcAssetPoints(ctrl, ctrl.value.events);
-          this.calcTeamPoints();
 
           array.controls.push(ctrl);
         });
       });
+
+      this.calcTeamPoints();
     }
   }
 
@@ -226,6 +245,6 @@ export class TeamPointsComponent implements OnInit, ControlValueAccessor {
         });
     });
 
-    this.form.get('totalPoints').setValue(totalPoints);
+    this.form.get('points').setValue(totalPoints);
   }
 }

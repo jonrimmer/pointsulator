@@ -4,9 +4,10 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Body
+  Body,
+  Put
 } from '@nestjs/common';
-import { NewWeekDTO } from '@pointsulator/api-interface';
+import { NewWeekDTO, WeekDetailsDTO } from '@pointsulator/api-interface';
 import { WeeksService } from './weeks.service';
 
 @Controller('weeks')
@@ -26,5 +27,10 @@ export class WeeksController {
   @Post()
   public createWeek(@Body() dto: NewWeekDTO) {
     return this.weeksService.createWeek(dto);
+  }
+
+  @Put(':id')
+  public saveWeek(@Body() dto: WeekDetailsDTO) {
+    return this.weeksService.saveWeek(dto);
   }
 }

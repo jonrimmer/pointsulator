@@ -1,0 +1,7 @@
+.actions {
+  margin-left: auto;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(auto);
+  grid-gap: 12px;
+}

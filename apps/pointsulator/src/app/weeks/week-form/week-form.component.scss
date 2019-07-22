@@ -1,0 +1,30 @@
+.teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 24px;
+  grid-gap: 24px;
+  justify-items: stretch;
+}
+
+.totals {
+  margin: 24px;
+  border-spacing: 0;
+
+  td,
+  th {
+    padding: 8px 12px;
+    text-align: right;
+
+    &:first-child {
+      text-align: left;
+    }
+  }
+
+  thead {
+    background-color: rgba(220, 220, 220);
+  }
+
+  tbody {
+    background-color: rgba(240, 240, 240);
+  }
+}

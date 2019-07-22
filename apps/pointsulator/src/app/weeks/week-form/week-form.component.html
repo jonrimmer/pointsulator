@@ -1,24 +1,34 @@
-<table>
+<table class="totals">
   <thead>
     <th>Team</th>
-    <th>Points</th>
+    <th>Starting Points</th>
+    <th>This Week</th>
+    <th>New Total</th>
   </thead>
   <tbody>
-    <tr *ngFor="let ctrl of teams.controls; let i = index">
+    <tr *ngFor="let ctrl of teamsCtrl.controls">
       <td>
-        {{ (week?.teams)[i].manager.name }}
+        {{ ctrl.value.manager.name }}
       </td>
       <td>
-        {{ ctrl.value.totalPoints }}
+        {{ ctrl.value.initialPoints }}
+      </td>
+      <td>
+        {{ ctrl.value.points }}
+      </td>
+      <td>
+        {{ ctrl.value.initialPoints + ctrl.value.points }}
       </td>
     </tr>
   </tbody>
 </table>
 
-<form [formGroup]="form">
+<form [formGroup]="form" class="teams">
   <ng-container formArrayName="teams">
-    <div *ngFor="let team of week?.teams; let i = index" class="team">
-      <pt-team-points [formControlName]="i" [team]="team"></pt-team-points>
-    </div>
+    <pt-team-points
+      *ngFor="let team of week?.teams; let i = index"
+      class="team"
+      [formControlName]="i"
+    ></pt-team-points>
   </ng-container>
 </form>

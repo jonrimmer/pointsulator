@@ -23,4 +23,8 @@ export class WeeksApiService {
   public createWeek(date: Date): Observable<WeekDTO> {
     return this.http.post<WeekDTO>(WEEKS_ENDPOINT, { date: date.valueOf() });
   }
+
+  public saveWeek(week: WeekDetailsDTO) {
+    return this.http.put<void>(`${WEEKS_ENDPOINT}/${week.id}`, week);
+  }
 }

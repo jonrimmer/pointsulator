@@ -9,7 +9,7 @@ import { TeamSheetsModule } from './team-sheets/team-sheets.module';
 import { TeamSheet, TeamSheetItem } from './team-sheets/team-sheet.entity';
 import { StartupService } from './startup/startup.service';
 import { WeeksModule } from './weeks/weeks.module';
-import { Week, WeekEvent, WeekAsset } from './weeks/week.entity';
+import { Week, WeekAsset, WeekScore } from './weeks/week.entity';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { Week, WeekEvent, WeekAsset } from './weeks/week.entity';
             TeamSheetItem,
             Week,
             WeekAsset,
-            WeekEvent
+            WeekScore
           ]
         };
       }

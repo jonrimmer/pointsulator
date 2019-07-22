@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Week, WeekEvent } from './week.entity';
+import { Week, WeekScore, WeekAsset } from './week.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DateTime } from 'luxon';
 import {
@@ -9,7 +9,6 @@ import {
   WeekDetailsDTO,
   NewWeekDTO,
   WeekTeamSheetDTO,
-  TeamSheetDTO,
   TeamSheetItemDTO,
   AssetType,
   WeekAssetDTO
@@ -21,8 +20,10 @@ import { groupBy, flow, map, sortBy } from 'lodash/fp';
 export class WeeksService {
   constructor(
     @InjectRepository(Week) private readonly weeksRepo: Repository<Week>,
-    @InjectRepository(WeekEvent)
-    private readonly eventsRepo: Repository<WeekEvent>,
+    @InjectRepository(WeekScore)
+    private readonly weekScoresRepo: Repository<WeekScore>,
+    @InjectRepository(WeekAsset)
+    private readonly weekAssetsRepo: Repository<WeekAsset>,
     private readonly tsService: TeamSheetsService
   ) {}
 
@@ -36,27 +37,56 @@ export class WeeksService {
 
   async getWeek(id: number): Promise<WeekDetailsDTO> {
     const week = await this.weeksRepo.findOne(id, {
-      relations: ['assets', 'assets.asset', 'assets.events', 'assets.owner']
+      relations: [
+        'assets',
+        'assets.asset',
+        'assets.owner',
+        'scores',
+        'scores.manager'
+      ]
+    });
+
+    const lastWeek = await this.weeksRepo.findOne(id - 1, {
+      relations: ['assets', 'scores'],
+      where: {}
     });
 
     const teamSheets = await this.tsService.findForDate(week.startDate);
 
     const teams: WeekTeamSheetDTO[] = teamSheets.map(team => ({
       manager: team.manager,
+      initialPoints: lastWeek
+        ? lastWeek.scores.find(score => score.manager.id === team.manager.id)
+            .points
+        : 0,
+      points: (
+        week.scores.find(score => score.manager.id === team.manager.id) || {
+          points: 0
+        }
+      ).points,
       ...(flow(
         map((item: TeamSheetItemDTO) => {
           const weekAsset = week.assets.find(a => a.id === item.asset.id) || {
             id: null,
             didNotPlay: false,
-            events: []
+            events: [],
+            goals: 0,
+            assists: 0,
+            conceded: 0,
+            redCard: false
           };
 
-          return {
+          const result: WeekAssetDTO = {
             ...item,
             id: weekAsset.id,
             didNotPlay: weekAsset.didNotPlay,
-            events: weekAsset.events
+            goals: weekAsset.goals,
+            assists: weekAsset.assists,
+            conceded: weekAsset.conceded,
+            redCard: weekAsset.redCard
           };
+
+          return result;
         }),
         sortBy(item => item.substitute),
         groupBy(item => item.asset.type)
@@ -66,11 +96,7 @@ export class WeeksService {
     return {
       id: week.id,
       startDate: week.startDate,
-      teams,
-      scoreboard: {
-        before: [],
-        after: []
-      }
+      teams
     };
   }
 
@@ -93,9 +119,60 @@ export class WeeksService {
     );
   }
 
+  async saveWeek(dto: WeekDetailsDTO) {
+    for (const team of dto.teams) {
+      for (const type of Object.keys(AssetType)) {
+        await this.weekAssetsRepo.save(
+          team[type].map((asset: WeekAssetDTO) => ({
+            id: asset.id,
+            asset: {
+              id: asset.asset.id
+            },
+            week: {
+              id: dto.id
+            },
+            owner: {
+              id: team.manager.id
+            },
+            didNotPlay: asset.didNotPlay,
+            goals: asset.goals,
+            assists: asset.assists,
+            conceded: asset.conceded,
+            redCard: asset.redCard
+          }))
+        );
+      }
+    }
+
+    await this.weekScoresRepo.delete({
+      week: {
+        id: dto.id
+      }
+    });
+
+    await this.weekScoresRepo.save(
+      dto.teams.map(t => ({
+        week: {
+          id: dto.id
+        },
+        manager: {
+          id: t.manager.id
+        },
+        points: t.points
+      }))
+    );
+  }
+
   async clear() {
-    await this.eventsRepo.delete({});
-    await this.eventsRepo.query('alter table week_event AUTO_INCREMENT = 1');
+    await this.weekAssetsRepo.delete({});
+    await this.weekAssetsRepo.query(
+      'alter table week_asset AUTO_INCREMENT = 1'
+    );
+
+    await this.weekScoresRepo.delete({});
+    await this.weekScoresRepo.query(
+      'alter table week_score AUTO_INCREMENT = 1'
+    );
     await this.weeksRepo.delete({});
     return this.weeksRepo.query('alter table week AUTO_INCREMENT = 1');
   }

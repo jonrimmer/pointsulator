@@ -37,11 +37,6 @@ export interface TeamSheetDTO {
   validFrom?: Date;
 }
 
-export interface ScoreboardEntryDTO {
-  manager: ManagerRef;
-  points: number;
-}
-
 export enum AssetEventType {
   Goal = 'Goal',
   OwnGoal = 'Own Goal',
@@ -74,21 +69,22 @@ export interface WeekAssetDTO {
   substitute: boolean;
   precedence: number;
   didNotPlay: boolean;
-  events: AssetEventDTO[];
+  goals: number;
+  assists: number;
+  conceded: number;
+  redCard: boolean;
 }
 
 export interface WeekTeamSheetDTO extends Record<AssetType, WeekAssetDTO[]> {
   manager: ManagerRef;
+  initialPoints: number;
+  points: number;
 }
 
 export interface WeekDetailsDTO {
   id: number;
   startDate: Date;
   teams: WeekTeamSheetDTO[];
-  scoreboard: {
-    before: ScoreboardEntryDTO[];
-    after?: ScoreboardEntryDTO[];
-  };
 }
 
 export interface TeamSheetConfigItemDTO {

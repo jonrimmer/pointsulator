@@ -27,15 +27,15 @@ function items(
   assets: AssetDTO[],
   type: AssetType,
   count: number,
-  subCount: number
+  nonSub: number
 ): TeamSheetConfigItemDTO[] {
   return assets
     .filter(a => a.type === type)
-    .slice(0, count + subCount)
+    .slice(0, count)
     .map((a, i) => ({
       assetId: a.id,
-      substitute: i < count,
-      precedence: i >= count ? i : null
+      substitute: i >= nonSub,
+      precedence: i >= nonSub ? i : null
     }));
 }
 
@@ -49,10 +49,10 @@ function fakeTeamsheet(
     validFrom: null,
     managerId: manager.id,
     items: [
-      ...items(managersAssets, AssetType.Goalkeeper, 1, 1),
-      ...items(managersAssets, AssetType.Defence, 1, 1),
-      ...items(managersAssets, AssetType.Midfielder, 3, 2),
-      ...items(managersAssets, AssetType.Forward, 3, 2)
+      ...items(managersAssets, AssetType.Goalkeeper, 2, 1),
+      ...items(managersAssets, AssetType.Defence, 2, 1),
+      ...items(managersAssets, AssetType.Midfielder, 4, 3),
+      ...items(managersAssets, AssetType.Forward, 4, 3)
     ]
   };
 }
@@ -69,9 +69,9 @@ export class StartupService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     if (environment.recreate) {
       await this.teamSheetsService.clear();
+      await this.weeksService.clear();
       await this.assetsService.clear();
       await this.managersService.clear();
-      await this.weeksService.clear();
 
       Faker.seed(1);
       Faker.setLocale('en');
@@ -119,36 +119,16 @@ export class StartupService implements OnApplicationBootstrap {
 
       // Create some teamsheets
 
-      const manager = managers[0];
-
-      await this.teamSheetsService.addTeamSheet({
-        managerId: manager.id,
-        items: [],
-        validFrom: DateTime.fromObject({
-          day: 1,
-          month: 1,
-          year: 2019
-        }).toJSDate()
-      });
-
-      await this.teamSheetsService.addTeamSheet({
-        managerId: manager.id,
-        items: [],
-        validFrom: DateTime.fromObject({
-          day: 1,
-          month: 2,
-          year: 2019
-        }).toJSDate()
-      });
-
-      await this.teamSheetsService.addTeamSheet({
-        ...fakeTeamsheet(savedAssets, manager),
-        validFrom: DateTime.fromObject({
-          day: 1,
-          month: 3,
-          year: 2019
-        }).toJSDate()
-      });
+      for (const manager of managers) {
+        await this.teamSheetsService.addTeamSheet({
+          ...fakeTeamsheet(savedAssets, manager),
+          validFrom: DateTime.fromObject({
+            day: 1,
+            month: 3,
+            year: 2019
+          }).toJSDate()
+        });
+      }
 
       await this.weeksService.createWeek({
         date: Date.now()

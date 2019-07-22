@@ -7,7 +7,7 @@ import {
   JoinColumn
 } from 'typeorm';
 import { Asset } from '../assets/asset.entity';
-import { AssetEventType, WeekStatus } from '@pointsulator/api-interface';
+import { WeekStatus } from '@pointsulator/api-interface';
 import { Manager } from '../managers/manager.entity';
 
 @Entity()
@@ -29,6 +29,9 @@ export class Week {
 
   @OneToMany(() => WeekAsset, event => event.week)
   assets: WeekAsset[];
+
+  @OneToMany(() => WeekScore, score => score.week)
+  scores: WeekScore[];
 }
 
 @Entity()
@@ -47,8 +50,17 @@ export class WeekAsset {
   @Column()
   didNotPlay: boolean;
 
-  @OneToMany(() => WeekEvent, event => event.asset)
-  events: WeekEvent[];
+  @Column()
+  goals: number;
+
+  @Column()
+  assists: number;
+
+  @Column()
+  conceded: number;
+
+  @Column()
+  redCard: boolean;
 
   @ManyToOne(() => Manager)
   @JoinColumn()
@@ -56,17 +68,18 @@ export class WeekAsset {
 }
 
 @Entity()
-export class WeekEvent {
+export class WeekScore {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => WeekAsset, asset => asset.events)
+  @ManyToOne(() => Week, week => week.scores)
   @JoinColumn()
-  asset: WeekAsset;
+  week: Week;
 
-  @Column({ type: 'enum', default: AssetEventType.Goal, enum: AssetEventType })
-  type: AssetEventType;
+  @ManyToOne(() => Manager, manager => manager.weekScores)
+  @JoinColumn()
+  manager: Manager;
 
   @Column()
-  count: number;
+  points: number;
 }

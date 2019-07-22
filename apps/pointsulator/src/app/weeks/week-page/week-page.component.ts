@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
 import { Subscription, Observable } from 'rxjs';
 import { WeeksApiService } from '../weeks-api.service';
 import { WeekDetailsDTO } from '@pointsulator/api-interface';
+import { WeekFormComponent } from '../week-form/week-form.component';
 
 @Component({
   selector: 'pt-week-page',
@@ -14,9 +15,13 @@ export class WeekPageComponent implements OnInit, OnDestroy {
   public week$: Observable<WeekDetailsDTO>;
   private subs = new Subscription();
 
+  @ViewChild(WeekFormComponent, { static: true })
+  public weekForm: WeekFormComponent;
+
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly weeksApi: WeeksApiService
+    private readonly weeksApi: WeeksApiService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +35,13 @@ export class WeekPageComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  save() {}
+  save() {
+    if (this.weekForm.form.valid) {
+      this.weeksApi.saveWeek(this.weekForm.form.value).subscribe(() => {
+        this.router.navigate(['..'], { relativeTo: this.route });
+      });
+    }
+  }
 
   delete() {}
 }

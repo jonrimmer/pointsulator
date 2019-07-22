@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { WeekFormComponent } from '../week-form/week-form.component';
 import { onlyFridays } from '../../utils/dates';
 import { FormGroup, FormControl } from '@angular/forms';
 import { DateTime } from 'luxon';

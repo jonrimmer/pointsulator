@@ -1,6 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/theming';
-@import './varables';
+@import './variables';
+
+// Include non-theme styles for core.
+@include mat-core();
+
+// Include theme styles for Angular Material components.
+@include angular-material-theme($theme);
 
 html,
 body {

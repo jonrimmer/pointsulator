@@ -46,24 +46,19 @@ export class WeeksService {
       ]
     });
 
-    const lastWeek = await this.weeksRepo.findOne(id - 1, {
-      relations: ['assets', 'scores'],
-      where: {}
-    });
+    const scoresToDate = await this.getScoresToDate(week.startDate);
 
     const teamSheets = await this.tsService.findForDate(week.startDate);
 
     const teams: WeekTeamSheetDTO[] = teamSheets.map(team => ({
       manager: team.manager,
-      initialPoints: lastWeek
-        ? lastWeek.scores.find(score => score.manager.id === team.manager.id)
-            .points
-        : 0,
-      points: (
-        week.scores.find(score => score.manager.id === team.manager.id) || {
+      initialPoints: (
+        scoresToDate.find(score => score.managerId === team.manager.id) || {
           points: 0
         }
       ).points,
+      points: week.scores.find(score => score.manager.id === team.manager.id)
+        .points,
       ...(flow(
         map((item: TeamSheetItemDTO) => {
           const weekAsset = week.assets.find(a => a.id === item.asset.id) || {
@@ -100,7 +95,7 @@ export class WeeksService {
     };
   }
 
-  createWeek(dto: NewWeekDTO) {
+  async createWeek(dto: NewWeekDTO) {
     const date = DateTime.fromMillis(dto.date);
 
     const status =
@@ -108,7 +103,7 @@ export class WeeksService {
         ? WeekStatus.Future
         : WeekStatus.InProgress;
 
-    return this.weeksRepo.save(
+    const week = await this.weeksRepo.save(
       {
         startDate: new Date(dto.date),
         status
@@ -117,6 +112,22 @@ export class WeeksService {
         reload: true
       }
     );
+
+    const teamSheets = await this.tsService.findForDate(week.startDate);
+
+    const scores = teamSheets.map(team => ({
+      manager: {
+        id: team.manager.id
+      },
+      week: {
+        id: week.id
+      },
+      points: 0
+    }));
+
+    this.weekScoresRepo.save(scores);
+
+    return week;
   }
 
   async saveWeek(dto: WeekDetailsDTO) {
@@ -175,5 +186,19 @@ export class WeeksService {
     );
     await this.weeksRepo.delete({});
     return this.weeksRepo.query('alter table week AUTO_INCREMENT = 1');
+  }
+
+  getScoresToDate(
+    date: Date
+  ): Promise<{ points: number; managerId: number }[]> {
+    return this.weeksRepo
+      .createQueryBuilder('week')
+      .leftJoin('week.scores', 'scores')
+      .leftJoin('scores.manager', 'manager')
+      .select('sum(scores.points)', 'points')
+      .where('week.startDate < :date', { date })
+      .addSelect('manager.id', 'managerId')
+      .groupBy('manager.id')
+      .getRawMany();
   }
 }

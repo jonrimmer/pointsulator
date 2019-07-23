@@ -104,46 +104,50 @@ export class TeamPointsComponent implements OnInit, ControlValueAccessor {
       Object.values(AssetType).forEach((type: AssetType) => {
         const array = this.assets.get(type) as FormArray;
 
-        obj[type].forEach(item => {
-          const ctrl = new FormGroup({
-            id: new FormControl(item.id),
-            asset: new FormControl(item.asset),
-            substitute: new FormControl(item.substitute),
-            didNotPlay: new FormControl(item.didNotPlay),
-            active: new FormControl(!item.substitute),
-            events: new FormGroup({
-              goals: new FormControl(item.goals),
-              assists: new FormControl(item.assists),
-              conceded: new FormControl(item.conceded),
-              redCard: new FormControl(item.redCard)
-            }),
-            points: new FormControl(0)
+        const ofType = obj[type];
+
+        if (ofType) {
+          ofType.forEach(item => {
+            const ctrl = new FormGroup({
+              id: new FormControl(item.id),
+              asset: new FormControl(item.asset),
+              substitute: new FormControl(item.substitute),
+              didNotPlay: new FormControl(item.didNotPlay),
+              active: new FormControl(!item.substitute),
+              events: new FormGroup({
+                goals: new FormControl(item.goals),
+                assists: new FormControl(item.assists),
+                conceded: new FormControl(item.conceded),
+                redCard: new FormControl(item.redCard)
+              }),
+              points: new FormControl(0)
+            });
+
+            if (item.didNotPlay) {
+              ctrl.get('events').disable();
+            }
+
+            ctrl
+              .get('didNotPlay')
+              .valueChanges.pipe(observeOn(asyncScheduler, 10))
+              .subscribe(() => {
+                this.recalcSubs(array);
+                this.calcTeamPoints();
+              });
+
+            ctrl
+              .get('events')
+              .valueChanges.pipe(observeOn(asyncScheduler, 10))
+              .subscribe(events => {
+                this.calcAssetPoints(ctrl, events);
+                this.calcTeamPoints();
+              });
+
+            this.calcAssetPoints(ctrl, ctrl.value.events);
+
+            array.push(ctrl);
           });
-
-          if (item.didNotPlay) {
-            ctrl.get('events').disable();
-          }
-
-          ctrl
-            .get('didNotPlay')
-            .valueChanges.pipe(observeOn(asyncScheduler, 10))
-            .subscribe(() => {
-              this.recalcSubs(array);
-              this.calcTeamPoints();
-            });
-
-          ctrl
-            .get('events')
-            .valueChanges.pipe(observeOn(asyncScheduler, 10))
-            .subscribe(events => {
-              this.calcAssetPoints(ctrl, events);
-              this.calcTeamPoints();
-            });
-
-          this.calcAssetPoints(ctrl, ctrl.value.events);
-
-          array.controls.push(ctrl);
-        });
+        }
       });
 
       this.calcTeamPoints();

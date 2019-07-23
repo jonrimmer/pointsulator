@@ -96,7 +96,8 @@ export class StartupService implements OnApplicationBootstrap {
             type,
             owner: {
               id: faker.random.arrayElement(managers).id
-            }
+            },
+            price: faker.random.number({ min: 1, max: 5, precision: 0.1 })
           }))
         );
       });
@@ -110,7 +111,8 @@ export class StartupService implements OnApplicationBootstrap {
             type,
             owner: {
               id: faker.random.arrayElement(managers).id
-            }
+            },
+            price: faker.random.number({ min: 1, max: 5, precision: 0.1 })
           }))
         );
       });

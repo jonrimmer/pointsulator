@@ -1,3 +1,6 @@
+@import '~@angular/material/theming';
+@import '../variables';
+
 :host {
   height: 100%;
   display: flex;
@@ -6,4 +9,19 @@
 
 .content {
   flex: 1;
+}
+
+.title {
+  margin-right: 24px;
+}
+
+.toolbar-contents {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 12px;
+}
+
+.active-link {
+  background-color: mat-color($accent) !important;
+  border: none;
 }

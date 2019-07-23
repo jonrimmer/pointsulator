@@ -10,6 +10,7 @@ function mapAsset(a: Asset): AssetDTO {
     name: a.name,
     team: a.team,
     type: a.type,
+    price: a.price,
     owner: a.owner
       ? {
           id: a.owner.id,

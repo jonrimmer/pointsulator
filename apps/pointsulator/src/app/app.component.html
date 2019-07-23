@@ -1,8 +1,19 @@
 <mat-toolbar color="primary">
-  <span>Pointsulator</span>
-  <a mat-button routerLink="assets">Assets</a>
-  <a mat-button routerLink="managers">Managers</a>
-  <a mat-button routerLink="weeks">Weeks</a>
+  <div class="toolbar-contents">
+    <span class="title">Pointsulator</span>
+    <a mat-stroked-button routerLinkActive="active-link" routerLink="assets"
+      >Assets</a
+    >
+    <a mat-stroked-button routerLinkActive="active-link" routerLink="managers"
+      >Managers</a
+    >
+    <a mat-stroked-button routerLinkActive="active-link" routerLink="squads"
+      >Squads</a
+    >
+    <a mat-stroked-button routerLinkActive="active-link" routerLink="weeks"
+      >Weeks</a
+    >
+  </div>
 </mat-toolbar>
 
 <div class="content">

@@ -7,6 +7,7 @@ export interface AssetDTO extends AssetRef {
   team: string;
   type: AssetType;
   owner?: ManagerRef;
+  price: number;
 }
 
 export enum AssetType {
@@ -23,7 +24,7 @@ export interface ManagerRef {
 
 export interface ManagerDTO extends ManagerRef {
   teamName: string;
-  squad?: AssetRef[];
+  squad?: AssetDTO[];
 }
 export interface TeamSheetItemDTO {
   asset: AssetDTO;

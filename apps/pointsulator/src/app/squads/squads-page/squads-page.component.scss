@@ -1,0 +1,34 @@
+:host {
+  margin: 12px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(1fr);
+  grid-gap: 12px;
+}
+
+.squad {
+  flex: 1;
+}
+
+h2 {
+  text-align: center;
+  font-size: inherit;
+}
+
+table {
+  border-spacing: 0;
+  width: 100%;
+
+  td,
+  th {
+    padding: 4px;
+    text-align: left;
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  th {
+    background-color: lightgray;
+  }
+}

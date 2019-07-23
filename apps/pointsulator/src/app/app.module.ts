@@ -42,6 +42,9 @@ import { CreateWeekPageComponent } from './weeks/create-week-page/create-week-pa
 import { WeekFormComponent } from './weeks/week-form/week-form.component';
 import { TeamPointsComponent } from './weeks/team-points/team-points.component';
 import { ItemPointsComponent } from './weeks/item-points/item-points.component';
+import { SquadsPageComponent } from './squads/squads-page/squads-page.component';
+import { AssetNamePipe } from './asset-name.pipe';
+import { AssetTypePipe } from './pipes/asset-type.pipe';
 
 export const ROUTES: Route[] = [
   {
@@ -77,6 +80,10 @@ export const ROUTES: Route[] = [
     component: WeekPageComponent
   },
   {
+    path: 'squads',
+    component: SquadsPageComponent
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'assets'
@@ -98,7 +105,10 @@ export const ROUTES: Route[] = [
     CreateWeekPageComponent,
     WeekFormComponent,
     TeamPointsComponent,
-    ItemPointsComponent
+    ItemPointsComponent,
+    SquadsPageComponent,
+    AssetNamePipe,
+    AssetTypePipe
   ],
   imports: [
     BrowserModule,

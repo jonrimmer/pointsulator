@@ -1,0 +1,23 @@
+<div class="squad" *ngFor="let manager of managers">
+  <h2>{{ manager.name }}</h2>
+
+  <table>
+    <thead>
+      <th>Asset</th>
+      <th>Type</th>
+      <th>Price</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let asset of manager.squad" [class]="asset.type">
+        <td [attr.title]="asset.name">{{ asset | assetName }}</td>
+        <td>{{ asset.type | assetType }}</td>
+        <td>{{ asset.price | number: '0.1' }}</td>
+      </tr>
+      <tr>
+        <th>Cash Remaining</th>
+        <th></th>
+        <th>{{ manager.cashRemaining }}</th>
+      </tr>
+    </tbody>
+  </table>
+</div>

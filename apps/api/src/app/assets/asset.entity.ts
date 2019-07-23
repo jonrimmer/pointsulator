@@ -13,6 +13,9 @@ export class Asset {
   @Column()
   team: string;
 
+  @Column()
+  price: number;
+
   @Column({
     type: 'enum',
     enum: AssetType,

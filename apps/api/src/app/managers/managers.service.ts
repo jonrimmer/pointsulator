@@ -10,11 +10,6 @@ function mapManager(m: Manager): ManagerDTO {
     name: m.name,
     teamName: m.teamName,
     squad: m.squad
-      ? m.squad.map(a => ({
-          id: a.id,
-          name: a.name
-        }))
-      : null
   };
 }
 @Injectable()
@@ -29,7 +24,7 @@ export class ManagersService {
       relations: ['squad']
     });
 
-    return managers.map(mapManager);
+    return managers;
   }
 
   async findById(id: number): Promise<ManagerDTO> {

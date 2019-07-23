@@ -33,7 +33,8 @@ const assetsPageReducer = createDataPageReducer<AssetDTO>(
     name: null,
     team: null,
     owner: null,
-    type: AssetType.Forward
+    type: AssetType.Forward,
+    price: 0
   })
 );
 

@@ -12,15 +12,26 @@ import { Observable } from 'rxjs';
   styleUrls: ['./assets-page.component.css']
 })
 export class AssetsPageComponent extends DataPage<AssetDTO> implements OnInit {
-  displayedColumns = ['actions', 'id', 'name', 'team', 'type', 'owner'];
+  displayedColumns = [
+    'actions',
+    'id',
+    'name',
+    'team',
+    'type',
+    'price',
+    'owner'
+  ];
+
   editColumns = [
     'editActions',
     'id',
     'editName',
     'editTeam',
     'editType',
+    'editPrice',
     'editOwner'
   ];
+
   managers$: Observable<ManagerRef[]>;
 
   constructor(store: Store<State>) {
@@ -33,6 +44,7 @@ export class AssetsPageComponent extends DataPage<AssetDTO> implements OnInit {
       name: new FormControl(null, Validators.required),
       team: new FormControl(null, Validators.required),
       type: new FormControl(null, Validators.required),
+      price: new FormControl(null, Validators.required),
       owner: new FormControl(null)
     });
   }
